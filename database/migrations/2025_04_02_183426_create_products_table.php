@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained("categories")->onDelete("cascade")->onUpdate("cascade");
             $table->foreignId('user_id')->nullable()->constrained("users")->onDelete("cascade")->onUpdate("cascade");
             $table->foreignId('city_id')->nullable()->constrained("cities");
-            $table->tinyInteger("status")->default(1)->comment("1=>enable , 0=>disable");
+            $table->tinyInteger("status")->default(1)->comment("1=>enable , 0=>disable ,3=>pending");
             $table->dateTime('published_at')->nullable();
             $table->dateTime('expierd_at')->nullable();
             $table->unsignedBigInteger('view')->default(0);

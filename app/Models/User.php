@@ -23,6 +23,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'mobile',
+        'mobile_verified_at',
+        'city_id',
     ];
 
     /**
@@ -48,8 +51,16 @@ class User extends Authenticatable
         ];
     }
 
-            public function products()
+    public function products()
     {
         return $this->hasMany(Products::class);
+    }
+    public function favoriteProducts()
+    {
+        return $this->belongsToMany(Products::class)->withTimestamps();
+    }
+           public function viewedProducts()
+    {
+        return $this->belongsToMany(Products::class ,'products_view_history')->withTimestamps();
     }
 }

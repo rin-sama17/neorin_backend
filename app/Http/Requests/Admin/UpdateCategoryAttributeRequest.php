@@ -21,12 +21,12 @@ class UpdateCategoryAttributeRequest extends FormRequest
      */
     public function rules(): array
     {
-          return [
-           'name'=> "required|max:120|min:2",
-           'unit'=>"required|max:500|min:5",
-           'type'=>"required|numeric|in:0,1",
-           'category_id'=>"required|min:1|exists:categories,id",
-           'status'=>"required|numeric|in:0,1",
+        return [
+            'name' => "required|max:120|min:2",
+            'unit' => "required|max:500|min:5",
+            'type' => "required|numeric|in:0,1",
+            'category_id' => "required|min:1|exists:categories,id",
+            'status' => "required|numeric|in:0,1",
         ];
     }
 }

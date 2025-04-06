@@ -13,7 +13,12 @@ class Products extends Model
    use SoftDeletes, CascadeSoftDeletes;
 
     protected $guarded=["id"];
-
+  protected function casts(): array
+    {
+        return [
+            'image' => 'array',
+        ];
+    }
     public function category(){
         return $this->belongsTo(Category::class);
     }
@@ -22,5 +27,15 @@ class Products extends Model
     }
     public function user(){
         return $this->belongsTo(User::class);
+    }
+
+       public function favoritedByUsers()
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
+       public function viewedByUsers()
+    {
+        return $this->belongsToMany(User::class ,'products_view_history')->withTimestamps();
     }
 }

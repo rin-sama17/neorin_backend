@@ -28,10 +28,12 @@ class Category extends Model
     {
         return $this->hasMany($this, 'parent_id');
     }
+
         public function parent()
     {
         return $this->hasOne($this, 'parent_id');
     }
+
           public function products()
     {
         return $this->hasMany(Products::class);

@@ -21,11 +21,11 @@ class UpdateCategoryValueRequest extends FormRequest
      */
     public function rules(): array
     {
-          return [
-           'value'=> "required|max:120|min:2",
-           'type'=>"required|numeric|in:0,1",
-           'category_attribute_id'=>"required|min:1|exists:categories,id",
-           'status'=>"required|numeric|in:0,1",
+        return [
+            'value' => "required|max:120|min:2",
+            'type' => "required|numeric|in:0,1",
+            'category_attribute_id' => "required|min:1|exists:category_attributes,id",
+            'status' => "required|numeric|in:0,1",
         ];
     }
 }
