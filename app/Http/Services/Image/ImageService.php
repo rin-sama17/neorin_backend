@@ -55,7 +55,7 @@ class ImageService extends ImageToolsService
 
         $images['indexArray'] = $indexArray;
         $images['directory'] = $this->getfinalImageDirectory();
-        $images['currentImage'] = Config::get('image.default-current-index-image');
+        $images['currentImage'] = $indexArray[Config::get('image.default-current-index-image')];
 
         return $images;
     }

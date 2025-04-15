@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Home;
+namespace App\Http\Resources\Admin\Product;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CategoryResource extends JsonResource
+class GalleryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,10 +15,12 @@ class CategoryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'name' => $this->name,
-            'icon' => $this->icon,
-            'slug' => $this->slug,
-            'children' => $this->children,
+            'id' => $this->id,
+            'product_id' => $this->product_id,
+            'image' => $this->image,
+            "status" => $this->status,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 

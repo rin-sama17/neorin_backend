@@ -19,7 +19,7 @@ class ProductsController extends Controller
      */
     public function index()
     {
-         return new ProductsCollection(Products::all());
+        return new ProductsCollection(Products::all());
     }
 
     /**
@@ -28,16 +28,17 @@ class ProductsController extends Controller
     public function store(StoreProductsRequest $request, ImageService $imageService)
     {
         $input = $request->all();
-        if($request->hasFile('image')){
+        $input['user_id'] = auth()->user()->id;
+        if ($request->hasFile('image')) {
             $imageService->setExclusiveDirectory('images' . DIRECTORY_SEPARATOR . 'product-images');
             $result = $imageService->createIndexAndSave($request->image);
-         if($result){
-            $input['image']= $result;
-         }else{
-            $this->error(null ,'خطا در ذخیره عکس',400);
-         }
+            if ($result) {
+                $input['image'] = $result;
+            } else {
+                $this->error(null, 'خطا در ذخیره عکس', 400);
+            }
         };
-        $product =Products::create($input);
+        $product = Products::create($input);
         return new ProductsResource($product);
     }
 
@@ -54,39 +55,40 @@ class ProductsController extends Controller
      */
     public function update(UpdateProductsRequest $request, Products $product, ImageService $imageService)
     {
-       $input = $request->all();
+        $input = $request->all();
 
-        if($request->hasFile('image')){
-            if(!empty($product->image)) {
-            $imageService->deleteDirectoryAndFiles($product->image['directory']);
+        if ($request->hasFile('image')) {
+            if (!empty($product->image)) {
+                $imageService->deleteDirectoryAndFiles($product->image['directory']);
             }
             $imageService->setExclusiveDirectory('images' . DIRECTORY_SEPARATOR . 'product-images');
             $result = $imageService->createIndexAndSave($request->image);
 
-            if($result ==false) {
-            return $this->error(null ,'خطا در فرایند اپلود عکس',400);
+            if ($result == false) {
+                return $this->error(null, 'خطا در فرایند اپلود عکس', 400);
             }
             $input['image'] = $result;
-
-
-        }else{
-            if(isset($input['currentImage']) && !empty($product->image)){
+        } else {
+            if (isset($input['currentImage']) && !empty($product->image)) {
                 $image = $product->image;
                 $image['currentImage'] = $input['currentImage'];
                 $input['image'] = $image;
             }
         };
 
-       $product->update($input);
-       return new ProductsResource($product);
+        $product->update($input);
+        return new ProductsResource($product);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Products $product)
+    public function destroy(Products $product, ImageService $imageService)
     {
-      $product->delete();
-      return $this->success(null,"محصول با موفقیت حذف شد");
+        if (!empty($product->image)) {
+            $imageService->deleteDirectoryAndFiles($product->image['directory']);
+        }
+        $product->delete();
+        return $this->success(null, "محصول با موفقیت حذف شد");
     }
 }

@@ -7,6 +7,7 @@ use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Product\Products;
+use App\Models\Product\CategoryAttribute;
 
 class Category extends Model
 {
@@ -18,25 +19,28 @@ class Category extends Model
         return [
             'slug' => [
                 'source' => 'name'
-                ]
-            ];
-        }
+            ]
+        ];
+    }
 
-        protected $guarded=["id", 'slug'];
+    protected $guarded = ["id", 'slug'];
 
-          public function children()
+    public function children()
     {
         return $this->hasMany($this, 'parent_id');
     }
 
-        public function parent()
+    public function parent()
     {
-        return $this->hasOne($this, 'parent_id');
+        return $this->belongsTo($this, 'parent_id');
     }
 
-          public function products()
+    public function products()
     {
         return $this->hasMany(Products::class);
     }
-
+    public function attributes()
+    {
+        return $this->hasMany(CategoryAttribute::class);
+    }
 }

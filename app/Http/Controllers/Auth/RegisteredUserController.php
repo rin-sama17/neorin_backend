@@ -19,96 +19,102 @@ use Illuminate\Support\Str;
 class RegisteredUserController extends Controller
 {
 
-    public function sendOtp(Request $request, SmsService $smsService){
+    public function sendOtp(Request $request, SmsService $smsService)
+    {
         $request->validate([
-            'mobile' => ['required', 'string','max:15'],
+            'mobile' => ['required', 'string', 'min:11', 'max:15'],
+        ], [
+            'mobile.required' => 'شماره موبایل الزامی است.',
+            'mobile.string' => 'شماره موبایل باید یک رشته باشد.',
+            'mobile.min' => 'شماره موبایل باید حداقل ۱۱ رقم باشد.',
+            'mobile.max' => 'شماره موبایل باید حداکثر ۱۵ رقم باشد.',
         ]);
-
-        $otpCode = random_int(1000 ,9999);
+        $otpCode = random_int(1000, 9999);
         $token = Str::random(60);
 
         $user = User::where('mobile', $request->mobile)->first();
 
 
         Otp::updateOrCreate(
-            ['login_id'=>$request->mobile, 'used'=>0],
+            ['login_id' => $request->mobile, 'used' => 0],
             [
-                'token'=> $token,
-                'login_id'=> $request->mobile,
-                'otp_code'=> $otpCode,
-                'type'=> 0,
-                'attempts'=> 0,
-                'user_id'=> $user ? $user->id : null,
+                'token' => $token,
+                'login_id' => $request->mobile,
+                'otp_code' => $otpCode,
+                'type' => 0,
+                'attempts' => 0,
+                'user_id' => $user ? $user->id : null,
             ]
         );
 
-        $smsService->sendSmsOtp($request->mobile ,$otpCode);
+        $smsService->sendSmsOtp($request->mobile, $otpCode);
 
         return response()->json([
-            'message'=>'کد تایید با موفقیت ارسال شد',
-            'token' =>$token,
+            'message' => 'کد تایید با موفقیت ارسال شد ' . $otpCode . '  :کد تایید شما(در محصول نهایی کد تایید از طریق پیامک ارسال خواهد شد )',
+            'token' => $token,
         ], 200);
     }
 
 
-        public function verifyOtpAndRegister(Request $request){
+    public function verifyOtpAndRegister(Request $request)
+    {
 
-            $request->validate([
-            'mobile' => ['required', 'string','max:15'],
-            'otp' => ['required', 'string','size:4'],
+        $request->validate([
+            'mobile' => ['required', 'string', 'max:15'],
+            'otp' => ['required', 'string', 'size:4'],
             'token' => ['required', 'string'],
         ]);
 
-        $otp = Otp::where('login_id',$request->mobile)->where('token', $request->token)->where('used', 0)->first();
+        $otp = Otp::where('login_id', $request->mobile)->where('token', $request->token)->where('used', 0)->first();
 
 
-        if(!$otp){
+        if (!$otp) {
             return response()->json([
-            'message'=>'کد تایید یافت نشد',
-        ], 422);
+                'message' => 'کد تایید یافت نشد',
+            ], 422);
         }
 
-        if($otp->attempts >= 3){
+        if ($otp->attempts >= 3) {
             return response()->json([
-            'message'=>'تعداد دفعات مجاز این کد به پایان رسیده است',
-        ], 429);
+                'message' => 'تعداد دفعات مجاز این کد به پایان رسیده است',
+            ], 429);
         }
 
-        if(Carbon::now()->diffInMinutes($otp->created_at) > 5){
+        if (Carbon::now()->diffInMinutes($otp->created_at) > 5) {
             return response()->json([
-            'message'=>'زمان مجاز این کد به پایان رسیده است',
-        ], 422);
+                'message' => 'زمان مجاز این کد به پایان رسیده است',
+            ], 422);
         }
 
-         if($otp->otp_code !== $request->otp){
+        if ($otp->otp_code !== $request->otp) {
             $otp->increment('attempts');
             return response()->json([
-            'message'=>'کد وارد شده صحیح نمیباشد',
-        ], 422);
+                'message' => 'کد وارد شده صحیح نمیباشد',
+            ], 422);
         }
 
-        $otp->update(['used'=>1]);
+        $otp->update(['used' => 1]);
 
         $user = User::where('mobile', $request->mobile)->first();
-        if($user){
+        if ($user) {
             Auth::login($user);
             return response()->json([
-            'message'=>'با موفقیت وارد شدید',
-        ], 200);
-        }else{
+                'message' => 'با موفقیت وارد شدید',
+            ], 200);
+        } else {
             $user = User::create([
-            'password' => Hash::make(Str(10)),
-            'mobile' => $request->mobile,
-            'city_id' => $request->city_id,
-            "mobile_verified_at"=>now()
-        ]);
+                'password' => Hash::make(Str(10)),
+                'mobile' => $request->mobile,
+                'city_id' => $request->city_id,
+                "mobile_verified_at" => now()
+            ]);
 
-        event(new Registered($user));
+            event(new Registered($user));
 
-        Auth::login($user);
-        return response()->json([
-            'message'=>'با موفقیت ثبت نام و وارد شدید',
-        ], 200);
+            Auth::login($user);
+            return response()->json([
+                'message' => 'با موفقیت ثبت نام و وارد شدید',
+            ], 200);
         };
     }
 }
@@ -117,11 +123,11 @@ class RegisteredUserController extends Controller
 
 
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
+/**
+ * Handle an incoming registration request.
+ *
+ * @throws \Illuminate\Validation\ValidationException
+ */
 
 //     public function store(Request $request): Response
 //     {

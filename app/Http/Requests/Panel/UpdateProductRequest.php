@@ -21,20 +21,20 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules(): array
     {
-         return [
+        return [
             'title' => 'required|max:120|min:2|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي., ]+$/u',
-            'description'=>'nullable|min:2|max:700',
-            'ads_type'=>'nullable|max:120|min:2|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء_-ي., ]+$/u',
-            'ads_status'=>'required|max:120|min:2|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء_-ي., ]+$/u',
-            'category_id'=>'required|min:1|exists:categories,id',
-            'city_id'=>'required|min:1|exists:cities,id',
-            'contact'=>'nullable|min:2|max:255',
-            'image'=>'nullable|max:3000|image|mimes:png,jpg,jpeg,gif',
-            'price'=>'nullable|numeric',
-            'tags'=>'nullable',
-            'lat'=>'nullable|numeric',
-            'lng'=>'nullable|numeric',
-            'willing_to_trade'=>'nullable|numeric|in:0,1',
+            'description' => 'nullable|min:2|max:700',
+            'product_type' => 'nullable|max:120|min:2|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء_-ي., ]+$/u',
+            'product_status' => 'required|max:120|min:2|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء_-ي., ]+$/u',
+            'category_id' => 'required|min:1|exists:categories,id',
+            'city_id' => 'required|min:1|exists:cities,id',
+            'contact' => 'nullable|min:2|max:255',
+            'image' => 'nullable|max:3000|image|mimes:png,jpg,jpeg,gif',
+            'price' => 'nullable|numeric',
+            'tags' => 'nullable',
+            'lat' => 'nullable|numeric',
+            'lng' => 'nullable|numeric',
+            'willing_to_trade' => 'nullable|numeric|in:0,1',
         ];
     }
 }

@@ -59,8 +59,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Products::class)->withTimestamps();
     }
-           public function viewedProducts()
+    public function viewedProducts()
     {
-        return $this->belongsToMany(Products::class ,'products_view_history')->withTimestamps();
+        return $this->belongsToMany(Products::class, 'products_view_history')->withTimestamps();
     }
 }

@@ -10,9 +10,14 @@ class CategoryAttribute extends Model
 {
   use SoftDeletes, CascadeSoftDeletes;
 
-    protected $guarded=["id"];
+  protected $guarded = ["id"];
 
-    public function category(){
-        return $this->belongsTo(Category::class);
-    }
+  public function category()
+  {
+    return $this->belongsTo(Category::class);
+  }
+  public function categoryValues()
+  {
+    return $this->hasMany(CategoryValue::class);
+  }
 }

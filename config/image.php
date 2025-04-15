@@ -1,19 +1,19 @@
 <?php
 
-return[
-    'index-image-size'=>[
+return [
+    'index-image-size' => [
         "large" => [
-            'width'=>800,
-            'height'=>600
+            'width' => 800,
+            'height' => 600
         ],
-        "medium" => [
-            'width'=>350,
-            'height'=>350
+        "mediume" => [
+            'width' => 350,
+            'height' => 350
         ],
         "small" => [
-            'width'=>80,
-            'height'=>80
+            'width' => 80,
+            'height' => 80
         ],
     ],
-    'default-current-index-image'=>'mediume'
+    'default-current-index-image' => 'mediume'
 ];

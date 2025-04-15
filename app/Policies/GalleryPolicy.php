@@ -2,11 +2,12 @@
 
 namespace App\Policies;
 
+use App\Models\Product\Gallery;
 use App\Models\Product\Products;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class ProductsPolicy
+class GalleryPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,9 +20,9 @@ class ProductsPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Products $product): bool
+    public function view(User $user, Gallery $gallery)
     {
-        return $user->id === $product->user_id;
+        return $user->id == $gallery->product->user_id;
     }
 
     /**
@@ -35,23 +36,23 @@ class ProductsPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Products $products): bool
+    public function update(User $user, Gallery $gallery): bool
     {
-        return $user->id === $products->user_id;
+        return $user->id === $gallery->product->user_id;;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Products $products): bool
+    public function delete(User $user, Gallery $gallery): bool
     {
-        return $user->id === $products->user_id;
+        return $user->id === $gallery->product->user_id;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Products $products): bool
+    public function restore(User $user, Gallery $gallery): bool
     {
         return false;
     }
@@ -59,7 +60,7 @@ class ProductsPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Products $products): bool
+    public function forceDelete(User $user, Gallery $gallery): bool
     {
         return false;
     }

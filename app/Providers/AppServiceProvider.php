@@ -21,9 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        return Auth::loginUsingId(8);
+        Auth::loginUsingId(8);
         ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
-            return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
+            return config('app.frontend_url') . "/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
         });
     }
 }
