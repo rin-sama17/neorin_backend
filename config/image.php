@@ -6,7 +6,7 @@ return [
             'width' => 800,
             'height' => 600
         ],
-        "mediume" => [
+        "medium" => [
             'width' => 350,
             'height' => 350
         ],
@@ -15,5 +15,5 @@ return [
             'height' => 80
         ],
     ],
-    'default-current-index-image' => 'mediume'
+    'default-current-index-image' => 'medium'
 ];

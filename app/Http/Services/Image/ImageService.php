@@ -32,8 +32,10 @@ class ImageService extends ImageToolsService
         $imageSizes = Config::get('image.index-image-size');
 
         $this->setImage($image);
-        $this->getImageDirectory() ?? $this->setImageDirectory(date('Y') . DIRECTORY_SEPARATOR, date("m") . DIRECTORY_SEPARATOR . date("d"));
-        $this->setImageDirectory($this->getImageDirectory() . DIRECTORY_SEPARATOR . time());
+
+        $baseDir = date('Y') . DIRECTORY_SEPARATOR . date("m") . DIRECTORY_SEPARATOR . date("d");
+        $uniqueDir = $baseDir . DIRECTORY_SEPARATOR . uniqid();
+        $this->setImageDirectory($uniqueDir);
 
         $this->getImageName() ?? $this->setImageName(time());
         $imageName = $this->getImageName();
@@ -56,7 +58,9 @@ class ImageService extends ImageToolsService
         $images['indexArray'] = $indexArray;
         $images['directory'] = $this->getfinalImageDirectory();
         $images['currentImage'] = $indexArray[Config::get('image.default-current-index-image')];
-
+        $this->setImageName(
+            null
+        );
         return $images;
     }
 

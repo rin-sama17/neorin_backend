@@ -29,17 +29,24 @@ class GalleryController extends Controller
     public function store(StoreGalleryRequest $request, ImageService $imageService)
     {
         $input = $request->all();
-        if ($request->hasFile('image')) {
+        foreach ($request->file('images') as $image) {
+            $productImage = [
+                "product_id" => $input['product_id'],
+                "image" => null
+            ];
             $imageService->setExclusiveDirectory('images' . DIRECTORY_SEPARATOR . 'product-gallery-images');
-            $result = $imageService->createIndexAndSave($request->image);
+            $result = $imageService->createIndexAndSave($image);
             if ($result) {
-                $input['image'] = $result;
+                $productImage['image'] = $result;
             } else {
                 $this->error(null, 'خطا در ذخیره عکس', 400);
             }
-        };
-        $gallery = Gallery::create($input);
-        return new GalleryResource($gallery);
+            Gallery::create($productImage);
+        }
+
+        return response()->json([
+            'message' => "success"
+        ], 201);
     }
 
     /**
