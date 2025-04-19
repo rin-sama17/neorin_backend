@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Home;
+namespace App\Http\Resources\Admin\Content;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class CategoryCollection extends ResourceCollection
+class SliderCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -15,7 +15,6 @@ class CategoryCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-
             'data' => $this->collection,
             'status' => 200,
         ];

@@ -33,27 +33,35 @@ class GalleryController extends Controller
     public function store(Request $request, ImageService $imageService, Products $product)
     {
         $request->validate([
-            'image' => 'required|max:3000|image|mimes:png,jpg,jpeg,gif',
-            "status" => "nullable|numeric|in:0,1",
+            'product_id' => 'required|min:1|exists:products,id',
+            'images' => 'required|array',
+            'images.*' => 'required|max:3000|image|mimes:png,jpg,jpeg,gif',
         ]);
         $this->authorize('create', $product);
 
         $input = [
             'product_id' => $product->id,
-            'image' => $request->image,
+            'images' => $request->images,
             'status' => 3
         ];
-        if ($request->hasFile('image')) {
+        foreach ($request->file('images') as $image) {
+            $productImage = [
+                "product_id" => $input['product_id'],
+                "image" => null
+            ];
             $imageService->setExclusiveDirectory('images' . DIRECTORY_SEPARATOR . 'product-gallery-images');
-            $result = $imageService->createIndexAndSave($request->image);
+            $result = $imageService->createIndexAndSave($image);
             if ($result) {
-                $input['image'] = $result;
+                $productImage['image'] = $result;
             } else {
                 $this->error(null, 'خطا در ذخیره عکس', 400);
             }
-        };
-        $gallery = Gallery::create($input);
-        return new GalleryResource($gallery);
+            Gallery::create($productImage);
+        }
+
+        return response()->json([
+            'message' => "success"
+        ], 201);
     }
 
     /**

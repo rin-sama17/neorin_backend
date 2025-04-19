@@ -30,7 +30,7 @@ class StateController extends Controller
     {
         $input = $request->all();
         State::create($input);
-        return $this->success(null, 'محل با موفقیت ساخته شد');
+        return $this->success(null, 'محل با موفقیت ساخته شد', 201);
     }
 
     /**

@@ -8,7 +8,12 @@ use App\Models\Product\Category;
 
 class CategoryController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         return new CategoryCollection(Category::all()->whereNull('parent_id'));
+    }
+    public function showAll()
+    {
+        return new CategoryCollection(Category::all());
     }
 }

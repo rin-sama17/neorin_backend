@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Admin\Product;
+namespace App\Http\Resources\Admin\Content;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CategoryResource extends JsonResource
+class SliderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,23 +16,14 @@ class CategoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'image' => $this->image,
+            'title' => $this->title,
             'description' => $this->description,
-            'icon' => $this->icon,
-            'status' => $this->status,
-            'slug' => $this->slug,
-            'parent_id' => $this->parent_id,
-            "attributes" => $this->attributes,
+            'link' => $this->link,
+            "type" => $this->type,
+            "status" => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-        ];
-    }
-
-
-    public function with($request)
-    {
-        return [
-            'statue' => true,
         ];
     }
 }

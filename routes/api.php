@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Content\PageController;
+use App\Http\Controllers\Admin\Content\SliderController;
 use App\Http\Controllers\Admin\Product\CategoryAttributeController;
 use App\Http\Controllers\Admin\Product\CategoryController;
 use App\Http\Controllers\Admin\Product\CategoryValueController;
@@ -13,12 +14,12 @@ use App\Http\Controllers\App\Home\CategoryController as HomeCategoryController;
 use App\Http\Controllers\App\Home\CityController;
 use App\Http\Controllers\App\Home\PageController as HomePageController;
 use App\Http\Controllers\App\Home\ProductsController as HomeProductsController;
+use App\Http\Controllers\App\Home\SliderController as HomeSliderController;
 use App\Http\Controllers\App\Home\StateController as HomeStateController;
 use App\Http\Controllers\App\Panel\FavoriteProductsController;
 use App\Http\Controllers\App\Panel\GalleryController as PanelGalleryController;
 use App\Http\Controllers\App\Panel\HistoryProductsController;
 use App\Http\Controllers\App\Panel\ProductsController as PanelProductsController;
-use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,8 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 
 Route::get('categories', [HomeCategoryController::class, 'index'])->name('categories');
+Route::get('all-categories', [HomeCategoryController::class, 'showAll'])->name('all-categories');
+Route::get('sliders', [HomeSliderController::class, 'index'])->name('sliders');
 Route::get('pages', [HomePageController::class, 'index'])->name('pages');
 Route::get('products', [HomeProductsController::class, 'index'])->name('products');
 Route::get('products/{product}', [HomeProductsController::class, 'show'])->name('product');
@@ -52,6 +55,7 @@ Route::prefix('admin')->name("admin.")->group(function () {
 
     Route::prefix('content')->name("content.")->group(function () {
         Route::apiResource('page', PageController::class);
+        Route::apiResource('slider', SliderController::class);
     });
 
     Route::prefix('users')->name("users.")->group(function () {
@@ -66,7 +70,7 @@ Route::prefix('panel')->name("panel.")->middleware(['auth:sanctum', 'mobileVerif
     Route::prefix('product')->name("product.")->group(function () {
         Route::apiResource('products', PanelProductsController::class);
     });
-    Route::prefix('gallery')->name("product.")->group(function () {
+    Route::prefix('gallery')->name("gallery.")->group(function () {
         Route::get('{product}/', [PanelGalleryController::class, 'index'])->name('index');
         Route::post('store/{product}', [PanelGalleryController::class, 'store'])->name('store');
         Route::get('show/{gallery}', [PanelGalleryController::class, 'show'])->name('show');
