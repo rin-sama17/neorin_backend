@@ -29,7 +29,7 @@ return new class extends Migration
             $table->tinyInteger('is_ladder')->default(0);
             $table->text('image')->nullable();
             $table->text('slug')->nullable();
-            $table->unsignedBigInteger('price')->nullable();
+            $table->text('price')->nullable();
             $table->text('tags')->nullable();
             $table->string('lat')->nullable();
             $table->string('lng')->nullable();

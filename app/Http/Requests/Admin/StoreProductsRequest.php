@@ -37,7 +37,7 @@ class StoreProductsRequest extends FormRequest
             'is_special' => "nullable|numeric|in:0,1",
             'is_ladder' => "nullable|numeric|in:0,1",
             'image' => 'nullable|max:3000|image|mimes:png,jpg,jpeg,gif',
-            'price' => 'nullable|numeric',
+            'price' => 'nullable|regex:/^[,0-9\-۰-۹]+$/u',
             'tags' => 'nullable',
             'lat' => 'nullable|numeric',
             'lng' => 'nullable|numeric',
@@ -83,8 +83,6 @@ class StoreProductsRequest extends FormRequest
             'image.max' => 'حجم تصویر نباید بیشتر از 3000 کیلوبایت باشد.',
             'image.image' => 'فایل انتخابی باید یک تصویر باشد.',
             'image.mimes' => 'فرمت تصویر باید یکی از فرمت‌های png، jpg، jpeg، gif باشد.',
-
-            'price.numeric' => 'قیمت باید یک عدد باشد.',
 
             'willing_to_trade.numeric' => 'وضعیت مایل به معامله باید یک عدد باشد.',
             'willing_to_trade.in' => 'وضعیت مایل به معامله باید 0 یا 1 باشد.',

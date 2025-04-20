@@ -39,7 +39,7 @@ class ProductsResource extends JsonResource
                     'url' => $image->image
                 ];
             }),
-            'category_attributes' => $this->category->attributes->map(function ($attribute) {
+            'category_attributes' => $this->category?->attributes->map(function ($attribute) {
                 return [
                     'id' => $attribute->id,
                     'name' => $attribute->name,
@@ -53,7 +53,7 @@ class ProductsResource extends JsonResource
                     'value' => $value->value,
                 ];
             }),
-            'category_attribute_with_values' => $this->category->attributes->map(function ($attribute) {
+            'category_attribute_with_values' => $this->category?->attributes->map(function ($attribute) {
                 $value = $this->categoryValues->firstWhere('category_attribute_id', $attribute->id);
                 return [
                     'id' => $attribute->id,

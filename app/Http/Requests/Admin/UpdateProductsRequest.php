@@ -35,7 +35,7 @@ class UpdateProductsRequest extends FormRequest
             'is_special' => "nullable|numeric|in:0,1",
             'is_ladder' => "nullable|numeric|in:0,1",
             'image' => 'nullable|max:3000',
-            'price' => 'nullable|numeric',
+            'price' => 'nullable|regex:/^[,0-9\-۰-۹]+$/u',
             'tags' => 'nullable',
             'lat' => 'nullable|numeric',
             'lng' => 'nullable|numeric',
@@ -79,8 +79,6 @@ class UpdateProductsRequest extends FormRequest
             'contact.max' => 'اطلاعات تماس نباید بیشتر از 255 کاراکتر باشد.',
 
             'image.max' => 'حجم تصویر نباید بیشتر از 3000 کیلوبایت باشد.',
-
-            'price.numeric' => 'قیمت باید یک عدد باشد.',
 
             'willing_to_trade.numeric' => 'وضعیت مایل به معامله باید یک عدد باشد.',
             'willing_to_trade.in' => 'وضعیت مایل به معامله باید 0 یا 1 باشد.',
