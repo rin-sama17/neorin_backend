@@ -10,6 +10,7 @@ use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Product\Gallery;
+use App\Models\Product\Fabric;
 
 class Products extends Model
 {
@@ -63,5 +64,9 @@ class Products extends Model
     public function gallery()
     {
         return $this->hasMany(Gallery::class, 'product_id');
+    }
+    public function fabrics()
+    {
+        return $this->belongsToMany(Fabric::class, 'fabric_product')->withTimestamps();
     }
 }

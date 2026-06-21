@@ -24,7 +24,7 @@ class GalleryController extends Controller
     {
         $product = Products::findOrFail($productId);
         $this->authorize('view', $product);
-        return new GalleryCollection($product->images);
+        return new GalleryCollection($product->gallery);
     }
 
     /**

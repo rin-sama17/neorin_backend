@@ -11,8 +11,8 @@ return [
             'height' => 350
         ],
         "small" => [
-            'width' => 80,
-            'height' => 80
+            'width' => 200,
+            'height' => 200
         ],
     ],
     'default-current-index-image' => 'medium'

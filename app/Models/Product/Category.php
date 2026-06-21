@@ -7,6 +7,7 @@ use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Product\Products;
+use App\Models\Product\Fabric;
 use App\Models\Product\CategoryAttribute;
 
 class Category extends Model
@@ -34,7 +35,10 @@ class Category extends Model
     {
         return $this->belongsTo($this, 'parent_id');
     }
-
+    public function fabric()
+    {
+        return $this->hasMany(Fabric::class);
+    }
     public function products()
     {
         return $this->hasMany(Products::class);

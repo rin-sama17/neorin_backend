@@ -22,7 +22,7 @@ class ProductsController extends Controller
         $product->increment('view');
         $historyController = new HistoryProductsController();
         $historyController->store($product);
-        $product = Products::with('category.parent', 'images', 'category.attributes', 'categoryValues')->find($product->id);
+        $product = Products::with('category.parent', 'gallery', 'category.attributes', 'categoryValues')->find($product->id);
         return new ProductsResource($product);
     }
 }

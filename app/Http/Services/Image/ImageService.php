@@ -47,7 +47,7 @@ class ImageService extends ImageToolsService
             $this->provider();
 
             $manager = new ImageManager(new Driver());
-            $result = $manager->read($image->getRealPath())->resizeDown($imageSize['width'], $imageSize['height'])->save(public_path($this->getImageAdress()), null, $this->getImageFormat());
+            $result = $manager->read($image->getRealPath())->coverDown($imageSize['width'], $imageSize['height'])->save(public_path($this->getImageAdress()), null, $this->getImageFormat());
             if ($result) {
                 $indexArray[$sizeAlias] = $this->getImageAdress();
             } else {
