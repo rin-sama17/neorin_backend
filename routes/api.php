@@ -5,8 +5,13 @@ use App\Http\Controllers\Admin\Content\SliderController;
 use App\Http\Controllers\Admin\Product\CategoryAttributeController;
 use App\Http\Controllers\Admin\Product\CategoryController;
 use App\Http\Controllers\Admin\Product\CategoryValueController;
+use App\Http\Controllers\Admin\Product\ColorController;
+use App\Http\Controllers\Admin\Product\DiscountController;
+use App\Http\Controllers\Admin\Product\FabricController;
+use App\Http\Controllers\App\Home\FabricController as HomeFabricController;
 use App\Http\Controllers\Admin\Product\GalleryController;
 use App\Http\Controllers\Admin\Product\ProductsController;
+use App\Http\Controllers\Admin\Product\SizeController;
 use App\Http\Controllers\Admin\Product\StateController;
 use App\Http\Controllers\Admin\Setting\SettingController;
 use App\Http\Controllers\Admin\User\UserController;
@@ -33,6 +38,8 @@ Route::get('all-categories', [HomeCategoryController::class, 'showAll'])->name('
 Route::get('sliders', [HomeSliderController::class, 'index'])->name('sliders');
 Route::get('pages', [HomePageController::class, 'index'])->name('pages');
 Route::get('products', [HomeProductsController::class, 'index'])->name('products');
+Route::get('fabrics', [HomeFabricController::class, 'index'])->name('products');
+Route::get('fabrics/{fabric}', [HomeFabricController::class, 'show'])->name('fabric');
 Route::get('products/{product}', [HomeProductsController::class, 'show'])->name('product');
 Route::get('states', [HomeStateController::class, 'index'])->name('states');
 
@@ -45,10 +52,14 @@ Route::prefix('admin')->name("admin.")->group(function () {
 
     Route::prefix('product')->name("product.")->group(function () {
         Route::apiResource('category', CategoryController::class);
+        Route::apiResource('discounts', DiscountController::class);
+        Route::apiResource('colors', ColorController::class);
+        Route::apiResource('sizes', SizeController::class);
         Route::apiResource('state', StateController::class);
         Route::apiResource('category-attribute', CategoryAttributeController::class);
         Route::apiResource('category-value', CategoryValueController::class);
         Route::apiResource('products', ProductsController::class);
+        Route::apiResource('fabrics', FabricController::class);
         Route::apiResource('gallery', GalleryController::class);
     });
 

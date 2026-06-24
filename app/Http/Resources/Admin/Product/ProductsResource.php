@@ -7,47 +7,67 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductsResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
+        $discount = $this->getActiveDiscount();
+
         return [
-            'id' => $this->id,
-            "title" => $this->title,
-            'description' => $this->description,
-            'product_type' => $this->product_type,
-            'product_status' => $this->product_status,
-            'category' => $this->category,
-            'user' => $this->user,
-            'city' => $this->city,
-            "status" => $this->status,
-            'published_at' => $this->published_at,
-            'expierd_at' => $this->expierd_at,
-            'view' => $this->view,
-            'contact' => $this->contact,
-            'is_special' => $this->is_special,
-            'is_ladder' => $this->is_ladder,
-            'image' => $this->image,
-            'gallery' => $this->gallery,
-            'slug' => $this->slug,
-            'price' => $this->price,
-            'tags' => $this->tags,
-            'lat' => $this->lat,
-            'lng' => $this->lng,
-            'willing_to_trade' => $this->willing_to_trade,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'id'               => $this->id,
+            'title'            => $this->title,
+            'description'      => $this->description,
+            'material'         => $this->material,
+            'slug'             => $this->slug,
+            'tags'             => $this->tags,
+            'status'           => $this->status,
+            'is_special'       => $this->is_special,
+            'view'             => $this->view,
+            'image'            => $this->image,
+
+            // قیمت پایه + تخفیف
+            'price'            => $this->price,
+            'discount'         => $discount ? [
+                'value'       => $discount->value,
+                'final_price' => $discount->calculateFinalPrice($this->price),
+            ] : null,
+
+            // سایزها با قیمت و تخفیف
+           'sizes' => $this->sizes->map(function ($size) use ($discount) {
+                    $originalPrice = $size->price ?? $this->price;
+                    return [
+                        'id'             => $size->id,
+                        'name'           => $size->name,
+                        'width'          => $size->width,
+                        'height'         => $size->height,
+                        'stock'          => $size->stock,
+                        'image'          => $size->image,
+                        'original_price' => $originalPrice,
+                        'discount'       => $discount ? [
+                            'value'       => $discount->value,
+                            'final_price' => $discount->calculateFinalPrice($originalPrice),
+                        ] : null,
+                    ];
+                }),
+            
+            // روابط
+            'category'         => $this->category,
+            'city'             => $this->city,
+            'user'             => $this->user,
+            'fabrics'          => $this->fabrics,
+            'colors'           => $this->colors,
+
+            // SEO
+            'seo' => [
+                'meta_title'       => $this->meta_title ?? $this->title,
+                'meta_description' => $this->meta_description ?? $this->description,
+            ],
+
+            'created_at'       => $this->created_at,
+            'updated_at'       => $this->updated_at,
         ];
     }
 
-
-    public function with($request)
+    public function with($request): array
     {
-        return [
-            'statue' => true,
-        ];
+        return ['status' => true];
     }
 }

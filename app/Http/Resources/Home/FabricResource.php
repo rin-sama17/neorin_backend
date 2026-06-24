@@ -16,8 +16,13 @@ class FabricResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            'title' => $this->name,
+            'title' => $this->title,
+            "material" => $this->material,
+            "image" => $this->image,
+            "color" => $this->color,
+            'slug' => $this->slug,
             'category' => $this->category,
+            'products'=>$this->products,
             'price' => $this->price,
             'status' => $this->status,
             'created_at' => $this->created_at,

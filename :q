@@ -1,0 +1,13 @@
+Jun 21 21:24:51 veniz-F-0A kernel: [0;1;31m[0;1;39m[0;1;31mACPI BIOS Error (bug): AE_AML_BUFFER_LIMIT, Index (0x000000032) is beyond end of object (length 0x32) (20230628/exoparg2-393)[0m
+Jun 21 21:24:51 veniz-F-0A kernel: [0;1;31m[0;1;39m[0;1;31mACPI Error: Aborting method \_SB.C247.WQBE due to previous error (AE_AML_BUFFER_LIMIT) (20230628/psparse-529)[0m
+Jun 21 21:24:51 veniz-F-0A kernel: [0;1;31m[0;1;39m[0;1;31mACPI BIOS Error (bug): AE_AML_BUFFER_LIMIT, Index (0x000000032) is beyond end of object (length 0x32) (20230628/exoparg2-393)[0m
+Jun 21 21:24:51 veniz-F-0A kernel: [0;1;31m[0;1;39m[0;1;31mACPI Error: Aborting method \_SB.C247.WQBE due to previous error (AE_AML_BUFFER_LIMIT) (20230628/psparse-529)[0m
+Jun 21 21:25:04 veniz-F-0A lightdm[1566]: [0;1;31m[0;1;39m[0;1;31mgkr-pam: couldn't unlock the login keyring.[0m
+Jun 21 21:25:10 veniz-F-0A lightdm[1824]: [0;1;31m[0;1;39m[0;1;31mgkr-pam: unable to locate daemon control file[0m
+Jun 21 21:25:14 veniz-F-0A systemd[1866]: [0;1;31m[0;1;39m[0;1;31mFailed to start app-gnome-gnome\x2dkeyring\x2dpkcs11-2118.scope - Application launched by gnome-session-binary.[0m
+Jun 21 21:25:14 veniz-F-0A systemd[1866]: [0;1;31m[0;1;39m[0;1;31mFailed to start app-gnome-gnome\x2dkeyring\x2dssh-2121.scope - Application launched by gnome-session-binary.[0m
+Jun 21 21:25:14 veniz-F-0A systemd[1866]: [0;1;31m[0;1;39m[0;1;31mFailed to start app-gnome-at\x2dspi\x2ddbus\x2dbus-2134.scope - Application launched by gnome-session-binary.[0m
+Jun 21 21:25:19 veniz-F-0A systemd[1866]: [0;1;31m[0;1;39m[0;1;31mFailed to start app-gnome-ubuntu\x2dreport\x2don\x2dupgrade-2293.scope - Application launched by gnome-session-binary.[0m
+Jun 21 21:25:57 veniz-F-0A systemd[1]: [0;1;31m[0;1;39m[0;1;31mFailed to start NetworkManager-wait-online.service - Network Manager Wait Online.[0m
+Jun 21 21:26:07 veniz-F-0A login[3146]: [0;1;31m[0;1;39m[0;1;31mPAM unable to dlopen(pam_lastlog.so): /usr/lib/security/pam_lastlog.so: cannot open shared object file: No such file or directory[0m
+Jun 21 21:26:07 veniz-F-0A login[3146]: [0;1;31m[0;1;39m[0;1;31mPAM adding faulty module: pam_lastlog.so[0m

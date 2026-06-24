@@ -11,7 +11,7 @@ class StoreFabricRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,17 @@ class StoreFabricRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => "required|max:120|min:2",
+            'material' => "required|max:120|min:2",
+            'color_ids'        => 'required|array',
+            'color_ids.*'      => 'exists:colors,id',
+            'image' => 'nullable|max:3000|image|mimes:png,jpg,jpeg,gif',
+            'product_ids' => 'nullable|array',
+            'product_ids.*' => 'exists:products,id',
+            'category_id' => 'required|min:1|exists:categories,id',
+            'price' => 'required|regex:/^[,0-9\-۰-۹]+$/u',
+            'status' => "required|numeric|in:0,1",
         ];
+
     }
 }

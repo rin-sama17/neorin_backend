@@ -28,7 +28,7 @@ class ProductsController extends Controller
     public function store(StoreProductsRequest $request, ImageService $imageService)
     {
         $input = $request->all();
-        $input['user_id'] = auth()->user()->id;
+        // $input['user_id'] = auth()->user()->id;
         if ($request->hasFile('image')) {
             $imageService->setExclusiveDirectory('images' . DIRECTORY_SEPARATOR . 'product-images');
             $result = $imageService->createIndexAndSave($request->image);
@@ -39,6 +39,12 @@ class ProductsController extends Controller
             }
         };
         $product = Products::create($input);
+        if ($request->has('fabric_ids')) {
+        $product->fabrics()->sync($request->fabric_ids);
+         }
+        if ($request->has('color_ids')) {
+        $product->colors()->sync($request->color_ids);
+        }
         return new ProductsResource($product);
     }
 
@@ -77,6 +83,12 @@ class ProductsController extends Controller
         };
 
         $product->update($input);
+        if ($request->has('fabric_ids')) {
+        $product->fabrics()->sync($request->fabric_ids);
+         }
+        if ($request->has('color_ids')) {
+        $product->colors()->sync($request->color_ids);
+        }
         return new ProductsResource($product);
     }
 

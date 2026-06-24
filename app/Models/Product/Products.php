@@ -60,13 +60,45 @@ class Products extends Model
     {
         return $this->belongsToMany(CategoryValue::class, 'product_category_value')->withTimestamps();
     }
-
+    public function sizes()
+    {
+        return $this->hasMany(Size::class, 'product_id');
+    }
     public function gallery()
     {
         return $this->hasMany(Gallery::class, 'product_id');
     }
     public function fabrics()
     {
-        return $this->belongsToMany(Fabric::class, 'fabric_product')->withTimestamps();
+        return $this->belongsToMany(Fabric::class, 'fabric_product', 'product_id', 'fabric_id')->withTimestamps();
     }
+     public function colors()
+    {
+        return $this->belongsToMany(Color::class, 'color_product' ,'product_id', 'color_id')->withTimestamps();
+    }
+  
+    public function discounts (){
+        return $this->hasMany(Discount::class, 'product_id');
+    }
+   public function getActiveDiscount(): ?Discount
+{
+    $now = now();
+
+    $activeQuery = fn($q) => $q
+        ->where('is_active', true)
+        ->where(fn($q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', $now))
+        ->where(fn($q) => $q->whereNull('ends_at')->orWhere('ends_at', '>', $now));
+
+    $discount = $this->discounts()->where($activeQuery)->latest()->first();
+
+    if (!$discount) {
+        $discount = Discount::where('category_id', $this->category_id)
+            ->whereNull('product_id')
+            ->where($activeQuery)
+            ->latest()
+            ->first();
+    }
+
+    return $discount;
+}
 }

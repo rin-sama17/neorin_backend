@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('fabrics', function (Blueprint $table) {
             $table->id();
             $table->text('title');
+            $table->text('slug')->nullable();
+            $table->text('material');
+            $table->text('image')->nullable();
             $table->foreignId('category_id')->nullable()->constrained("categories")->onDelete("cascade")->onUpdate("cascade");
             $table->text('price');
             $table->tinyInteger("status")->default(1)->comment("1=>enable , 0=>disable ,3=>pending");

@@ -11,7 +11,7 @@ use App\Models\Product\Category;
 
 class Fabric extends Model
 {
-    use SoftDeletes, Sluggable, CascadeSoftDeletes;
+    use SoftDeletes, CascadeSoftDeletes , Sluggable;
 
     protected $guarded = ['id'];
 
@@ -23,12 +23,23 @@ class Fabric extends Model
             ]
         ];
     }
+
+    protected function casts(): array
+    {
+        return [
+            'image' => 'array',
+        ];
+    }
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
     public function products()
     {
-        return $this->belongsToMany(Products::class, 'fabric_product')->withTimestamps();
+        return $this->belongsToMany(Products::class, 'fabric_product' ,'fabric_id', 'product_id')->withTimestamps();
+    }
+     public function colors()
+    {
+        return $this->belongsToMany(Color::class, 'color_fabric' ,'fabric_id', 'color_id')->withTimestamps();
     }
 }
