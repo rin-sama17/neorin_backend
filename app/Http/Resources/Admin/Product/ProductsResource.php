@@ -26,6 +26,9 @@ class ProductsResource extends JsonResource
             // قیمت پایه + تخفیف
             'price'            => $this->price,
             'discount'         => $discount ? [
+                "id"           => $discount->id,
+                'product_id'  => $discount->product?->id ?? null,
+                'category_id' => $discount->category?->id ?? null,
                 'value'       => $discount->value,
                 'final_price' => $discount->calculateFinalPrice($this->price),
             ] : null,
@@ -49,6 +52,7 @@ class ProductsResource extends JsonResource
                 }),
             
             // روابط
+            'gallery' =>$this->gallery,
             'category'         => $this->category,
             'city'             => $this->city,
             'user'             => $this->user,

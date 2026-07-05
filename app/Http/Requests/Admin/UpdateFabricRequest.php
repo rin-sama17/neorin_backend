@@ -22,9 +22,10 @@ class UpdateFabricRequest extends FormRequest
     public function rules(): array
     {
          return [
-            'title' => "required|max:120|min:2",
+              'title' => "required|max:120|min:2",
             'material' => "required|max:120|min:2",
-            'color' => "required|max:120|min:2",
+            'color_ids'        => 'required|array',
+            'color_ids.*'      => 'exists:colors,id',
             'image' => 'nullable|max:3000|image|mimes:png,jpg,jpeg,gif',
             'product_ids' => 'nullable|array',
             'product_ids.*' => 'exists:products,id',

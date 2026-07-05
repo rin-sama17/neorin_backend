@@ -11,7 +11,12 @@ class Size extends Model
     use SoftDeletes;
 
     protected $guarded = ["id"];
-
+    protected function casts(): array
+    {
+        return [
+            'image' => 'array',
+        ];
+    }
     public function product()
     {
         return $this->belongsTo(Products::class);

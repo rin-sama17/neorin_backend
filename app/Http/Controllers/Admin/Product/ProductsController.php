@@ -45,6 +45,9 @@ class ProductsController extends Controller
         if ($request->has('color_ids')) {
         $product->colors()->sync($request->color_ids);
         }
+        if ($request->has('category_values')) {
+        $product->categoryValues()->sync($request->category_values);
+        }
         return new ProductsResource($product);
     }
 
@@ -88,6 +91,9 @@ class ProductsController extends Controller
          }
         if ($request->has('color_ids')) {
         $product->colors()->sync($request->color_ids);
+        }
+        if ($request->has('category_values')) {
+        $product->categoryValues()->sync($request->category_values);
         }
         return new ProductsResource($product);
     }

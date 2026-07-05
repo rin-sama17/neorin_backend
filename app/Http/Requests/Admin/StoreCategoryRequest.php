@@ -23,7 +23,7 @@ class StoreCategoryRequest extends FormRequest
     {
         return [
             'name' => "required|max:120|min:2",
-            'description' => "required|max:500|min:5",
+            'description' => "nullable|max:500|min:5",
             'status' => "required|numeric|in:0,1",
             'icon' => 'nullable|min:2|max:120',
             'parent_id' => "nullable|min:1|exists:categories,id",
@@ -37,7 +37,6 @@ class StoreCategoryRequest extends FormRequest
             'name.max' => 'نام دسته‌بندی نباید بیشتر از 120 کاراکتر باشد.',
             'name.min' => 'نام دسته‌بندی باید حداقل 2 کاراکتر داشته باشد.',
 
-            'description.required' => 'توضیحات دسته‌بندی الزامی است.',
             'description.max' => 'توضیحات دسته‌بندی نباید بیشتر از 500 کاراکتر باشد.',
             'description.min' => 'توضیحات دسته‌بندی باید حداقل 5 کاراکتر داشته باشد.',
 

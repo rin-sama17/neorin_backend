@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('category_attributes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('unit');
+            $table->string('unit')->nullable();
             $table->tinyInteger('type');
             $table->timestamps();
-            $table->foreignId('category_id')->nullable()->constrained("categories")->onDelete("cascade")->onUpdate("cascade");
+            $table->foreignId('category_id')->constrained("categories")->onDelete("cascade")->onUpdate("cascade");
             $table->tinyInteger("status")->default(1)->comment("1=>enable , 0=>disable");
             $table->softDeletes();
         });

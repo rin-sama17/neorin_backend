@@ -1,0 +1,188 @@
+به نظر من برای پروژه تو بهتره از اول اصولی پیاده‌سازی کنیم. نه مثل spatie/permission که کلی امکاناتی داره که شاید لازم نداشته باشی، و نه یک سیستم ساده که بعداً مجبور به تغییرش بشی.
+
+من این مراحل رو پیشنهاد می‌کنم:
+
+✅ Step 1  ساخت جداول
+✅ Step 2  تعریف Model و Relationها
+✅ Step 3  Seeder برای Role و Permission
+✅ Step 4  Helperهای hasRole() و hasPermission()
+✅ Step 5  Middleware
+✅ Step 6  محافظت از Routeها
+✅ Step 7  ارسال Permissionها به Next.js
+✅ Step 8  مخفی کردن دکمه‌ها بر اساس Permission
+مرحله ۱: Migrationها
+roles
+php artisan make:model Role -m
+Schema::create('roles', function (Blueprint $table) {
+    $table->id();
+
+    $table->string('name');
+    $table->string('slug')->unique();
+
+    $table->timestamps();
+});
+permissions
+php artisan make:model Permission -m
+Schema::create('permissions', function (Blueprint $table) {
+    $table->id();
+
+    $table->string('name');
+    $table->string('slug')->unique();
+
+    $table->timestamps();
+});
+admin_role
+php artisan make:migration create_admin_role_table
+Schema::create('admin_role', function (Blueprint $table) {
+
+    $table->foreignId('admin_id')->constrained()->cascadeOnDelete();
+
+    $table->foreignId('role_id')->constrained()->cascadeOnDelete();
+
+    $table->primary([
+        'admin_id',
+        'role_id'
+    ]);
+});
+permission_role
+php artisan make:migration create_permission_role_table
+Schema::create('permission_role', function (Blueprint $table) {
+
+    $table->foreignId('permission_id')->constrained()->cascadeOnDelete();
+
+    $table->foreignId('role_id')->constrained()->cascadeOnDelete();
+
+    $table->primary([
+        'permission_id',
+        'role_id'
+    ]);
+});
+مرحله ۲: Relationها
+Admin
+public function roles()
+{
+    return $this->belongsToMany(Role::class);
+}
+Role
+public function admins()
+{
+    return $this->belongsToMany(Admin::class);
+}
+
+public function permissions()
+{
+    return $this->belongsToMany(Permission::class);
+}
+Permission
+public function roles()
+{
+    return $this->belongsToMany(Role::class);
+}
+مرحله ۳
+
+داخل Admin چند Helper اضافه می‌کنیم.
+
+public function hasRole($role)
+{
+    return $this->roles()
+        ->where('slug',$role)
+        ->exists();
+}
+public function hasPermission($permission)
+{
+    return $this->roles()
+        ->whereHas('permissions',function($q) use ($permission){
+
+            $q->where('slug',$permission);
+
+        })
+        ->exists();
+}
+
+بعداً استفاده:
+
+$admin->hasRole('super-admin');
+
+$admin->hasPermission('product.delete');
+مرحله ۴
+
+Seeder
+
+مثلاً
+
+Super Admin
+
+Product Manager
+
+Content Manager
+
+Sales Manager
+
+Permissionها
+
+product.view
+product.create
+product.update
+product.delete
+
+category.view
+category.create
+category.update
+category.delete
+
+fabric.view
+...
+مرحله ۵
+
+یک middleware
+
+permission:product.delete
+
+داخلش فقط
+
+abort_if(
+    !auth('admin')->user()->hasPermission($permission),
+    403
+);
+مرحله ۶
+
+Route
+
+Route::delete('/products/{id}')
+    ->middleware('permission:product.delete');
+مرحله ۷
+
+بعد از Login
+
+API
+
+GET /admin/me
+
+برمی‌گرداند
+
+{
+    "name":"Rin",
+
+    "roles":[
+        "product-manager"
+    ],
+
+    "permissions":[
+        "product.view",
+        "product.create",
+        "product.update"
+    ]
+}
+مرحله ۸
+
+در Next
+
+<Can permission="product.create">
+    <CreateButton/>
+</Can>
+
+یا
+
+if(can('product.delete')){
+
+}

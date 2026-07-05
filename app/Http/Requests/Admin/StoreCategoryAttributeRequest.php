@@ -23,8 +23,8 @@ class StoreCategoryAttributeRequest extends FormRequest
     {
         return [
             'name' => "required|max:120|min:2",
-            'unit' => "required|max:500|min:5",
-            'type' => "required|numeric|in:0,1",
+            'unit' => "nullable|max:500",
+            'type' => "required|numeric|in:0,1,3",
             'category_id' => "required|min:1|exists:categories,id",
             'status' => "required|numeric|in:0,1",
         ];
@@ -37,9 +37,7 @@ class StoreCategoryAttributeRequest extends FormRequest
             'name.max' => 'نام نباید بیشتر از 120 کاراکتر باشد.',
             'name.min' => 'نام باید حداقل 2 کاراکتر داشته باشد.',
 
-            'unit.required' => 'واحد الزامی است.',
             'unit.max' => 'واحد نباید بیشتر از 500 کاراکتر باشد.',
-            'unit.min' => 'واحد باید حداقل 5 کاراکتر داشته باشد.',
 
             'type.required' => 'نوع الزامی است.',
             'type.numeric' => 'نوع باید یک عدد باشد.',

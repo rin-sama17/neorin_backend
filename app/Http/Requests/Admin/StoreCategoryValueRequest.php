@@ -24,6 +24,7 @@ class StoreCategoryValueRequest extends FormRequest
         return [
             'value' => "required|max:120|min:2",
             'type' => "required|numeric|in:0,1",
+            'price'            => 'nullable|numeric|min:0',
             'category_attribute_id' => "required|min:1|exists:category_attributes,id",
             'status' => "required|numeric|in:0,1",
         ];

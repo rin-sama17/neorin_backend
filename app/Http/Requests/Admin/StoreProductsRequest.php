@@ -41,11 +41,11 @@ class StoreProductsRequest extends FormRequest
             'color_ids.*'      => 'exists:colors,id',
 
             // سایزها
-            'sizes'            => 'nullable|array',
-            'sizes.*.id'       => 'required|exists:size,id',
-            'sizes.*.price'    => 'nullable|numeric|min:0',
-            'sizes.*.stock'    => 'nullable|integer|min:0',
-            'sizes.*.image'    => 'nullable|image|mimes:png,jpg,jpeg,gif|max:3000',
+           'sizes'            => 'nullable|array',
+            'sizes[*].id'       => 'required|exists:size,id',
+            'sizes[*].price'    => 'nullable|numeric|min:0',
+            'sizes[*].stock'    => 'nullable|integer|min:0',
+            'sizes[*].image'    => 'nullable|image|mimes:png,jpg,jpeg,gif|max:3000',
         ];
     }
 

@@ -19,6 +19,7 @@ class CategoryValueResource extends JsonResource
             'value' => $this->value,
             'categoryAttribute' => $this->categoryAttribute,
             'type' =>$this->type,
+            "price" =>$this->price,
             'status' =>$this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Model\Users\Role;
 use App\Models\Product\Products;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -62,5 +63,24 @@ class User extends Authenticatable
     public function viewedProducts()
     {
         return $this->belongsToMany(Products::class, 'products_view_history')->withTimestamps();
+    }
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+    public function hasRole($role)
+    {
+        return $this->roles()
+            ->where('slug', $role)
+            ->exists();
+    }
+    public function hasPermission($permission)
+    {
+        return $this->roles()
+            ->whereHas('permissions', function ($q) use ($permission) {
+
+                $q->where('slug', $permission);
+            })
+            ->exists();
     }
 }

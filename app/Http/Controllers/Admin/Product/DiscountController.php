@@ -18,7 +18,10 @@ class DiscountController extends Controller
     {
         return new DiscountCollection(Discount::all());
     }
-    
+    public function show(Discount $discount)
+    {
+        return new DiscountResource($discount);
+    }
     public function store(StoreDiscountRequest $request)
     {
         $input = $request->all();

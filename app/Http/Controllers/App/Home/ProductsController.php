@@ -15,14 +15,39 @@ class ProductsController extends Controller
     {
         return new ProductsCollection(Products::all());
     }
-
     public function show(Products $product)
-    {
+{
+    $product->increment('view');
 
-        $product->increment('view');
+    if (auth()->check()) {
         $historyController = new HistoryProductsController();
         $historyController->store($product);
-        $product = Products::with('category.parent', 'gallery', 'category.attributes', 'categoryValues')->find($product->id);
-        return new ProductsResource($product);
     }
+
+    $product = Products::with([
+        'category.parent.attributes.categoryValues',
+        'category.attributes.categoryValues',
+        'sizes',
+        'gallery',
+        'colors',
+        'fabrics.colors',
+        'categoryValues',
+        'city',
+        'user',
+    ])->find($product->id);
+
+    return new ProductsResource($product);
+}
+//   public function show(Products $product)
+//     {
+//         $product->increment('view');
+
+//         if (auth()->check()) {
+//             $historyController = new HistoryProductsController();
+//             $historyController->store($product);
+//         }
+
+//         $product = Products::with('category.parent', 'gallery', 'category.attributes', 'categoryValues')->find($product->id);
+//         return new ProductsResource($product);
+//     }
 }

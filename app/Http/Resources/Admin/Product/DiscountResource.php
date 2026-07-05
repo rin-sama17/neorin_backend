@@ -17,11 +17,12 @@ class DiscountResource extends JsonResource
         return    
         [
             'id' => $this->id,
-            // 'product' => $this->product,
+            'product' => $this->product,
             'category' => $this->category,
+            'description'=>$this->description,
             'value' =>$this->value,
             'starts_at' =>$this->starts_at,
-            'end_at' =>$this->end_at,
+            'ends_at' =>$this->ends_at,
             'is_active' =>$this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at

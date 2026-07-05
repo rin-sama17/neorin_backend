@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sizes', function (Blueprint $table) { 
+            $table->id();
             $table->string('name');
             $table->string("width");
             $table->string("height");
             $table->foreignId('product_id')->constrained("products")->onDelete("cascade")->onUpdate("cascade");
             $table->unsignedBigInteger('price');
             $table->integer('stock')->default(0);
-            $table->string('image')->nullable();
+            $table->text('image')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

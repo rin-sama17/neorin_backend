@@ -19,7 +19,7 @@ class FabricResource extends JsonResource
             'title' => $this->title,
             "material" => $this->material,
             "image" => $this->image,
-            "color" => $this->color,
+            "colors" => $this->colors,
             'slug' => $this->slug,
             'category' => $this->category,
             'products'=>$this->products,

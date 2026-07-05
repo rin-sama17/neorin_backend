@@ -19,6 +19,7 @@ class CategoryAttributeResource extends JsonResource
             'name' => $this->name,
             'unit' => $this->unit,
             'category' => $this->category,
+            "values" => $this->categoryValues,
             'type' =>$this->type,
             'status' =>$this->status,
             'created_at' => $this->created_at,

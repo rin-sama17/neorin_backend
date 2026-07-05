@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_attribute_id')->nullable()->constrained("category_attributes")->onDelete("cascade")->onUpdate("cascade");
             $table->text('value');
+            $table->unsignedBigInteger('price');
             $table->tinyInteger('type')->default(0);
             $table->timestamps();
             $table->tinyInteger("status")->default(1)->comment("1=>enable , 0=>disable");
