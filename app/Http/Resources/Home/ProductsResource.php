@@ -81,9 +81,9 @@ class ProductsResource extends JsonResource
                     'value' => $value->value,
                 ];
             }),
-        'checkout_attributes' => $this->category?->checkoutAttributes(),
-    
-            'category_attribute_with_values' => $this->category?->attributes->map(function ($attribute) {
+            'checkout_attributes' => $this->category?->checkoutAttributes(),
+
+            'category_attribute_with_values' => $this->category?->attributes->where('type', 0)->map(function ($attribute) {
                 $value = $this->categoryValues->firstWhere('category_attribute_id', $attribute->id);
                 return [
                     'id' => $attribute->id,
@@ -94,21 +94,21 @@ class ProductsResource extends JsonResource
             }),
             'city'             => $this->city,
             'user'             => $this->user,
-             'fabrics' => $this->fabrics->map(function ($fabric) {
+            'fabrics' => $this->fabrics->map(function ($fabric) {
                 return [
                     "id" => $fabric->id,
-            'title' => $fabric->title,
-            "material" => $fabric->material,
-            "image" => $fabric->image,
-            "colors" => $fabric->colors,
-            'slug' => $fabric->slug,
-            'category' => $fabric->category,
-            'products'=>$fabric->products,
-            'price' => $fabric->price,
-            'status' => $fabric->status,
-            'created_at' => $fabric->created_at,
-            'updated_at' => $fabric->updated_at,
-                    
+                    'title' => $fabric->title,
+                    "material" => $fabric->material,
+                    "image" => $fabric->image,
+                    "colors" => $fabric->colors,
+                    'slug' => $fabric->slug,
+                    'category' => $fabric->category,
+                    'products' => $fabric->products,
+                    'price' => $fabric->price,
+                    'status' => $fabric->status,
+                    'created_at' => $fabric->created_at,
+                    'updated_at' => $fabric->updated_at,
+
                 ];
             }),
             'colors'           => $this->colors,

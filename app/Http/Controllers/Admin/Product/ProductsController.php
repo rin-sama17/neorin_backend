@@ -40,14 +40,23 @@ class ProductsController extends Controller
         };
         $product = Products::create($input);
         if ($request->has('fabric_ids')) {
-        $product->fabrics()->sync($request->fabric_ids);
-         }
+            $product->fabrics()->sync($request->fabric_ids);
+        }
         if ($request->has('color_ids')) {
-        $product->colors()->sync($request->color_ids);
+            $product->colors()->sync($request->color_ids);
         }
         if ($request->has('category_values')) {
-        $product->categoryValues()->sync($request->category_values);
+            $product->categoryValues()->delete();
+
+            foreach ($request->category_values as $item) {
+                $product->categoryValues()->create([
+                    'attribute_id'      => $item['attribute_id'],
+                    'category_value_id' => $item['value_id']  ?? null,
+                    'value'             => $item['value']      ?? null,
+                ]);
+            }
         }
+
         return new ProductsResource($product);
     }
 
@@ -87,13 +96,13 @@ class ProductsController extends Controller
 
         $product->update($input);
         if ($request->has('fabric_ids')) {
-        $product->fabrics()->sync($request->fabric_ids);
-         }
+            $product->fabrics()->sync($request->fabric_ids);
+        }
         if ($request->has('color_ids')) {
-        $product->colors()->sync($request->color_ids);
+            $product->colors()->sync($request->color_ids);
         }
         if ($request->has('category_values')) {
-        $product->categoryValues()->sync($request->category_values);
+            $product->categoryValues()->sync($request->category_values);
         }
         return new ProductsResource($product);
     }

@@ -15,18 +15,50 @@ use App\Http\Controllers\Admin\Product\SizeController;
 use App\Http\Controllers\Admin\Product\StateController;
 use App\Http\Controllers\Admin\Setting\SettingController;
 use App\Http\Controllers\Admin\User\UserController;
+use App\Http\Controllers\App\CartController;
 use App\Http\Controllers\App\Home\CategoryController as HomeCategoryController;
 use App\Http\Controllers\App\Home\CityController;
 use App\Http\Controllers\App\Home\PageController as HomePageController;
 use App\Http\Controllers\App\Home\ProductsController as HomeProductsController;
 use App\Http\Controllers\App\Home\SliderController as HomeSliderController;
 use App\Http\Controllers\App\Home\StateController as HomeStateController;
+use App\Http\Controllers\App\OrderController;
 use App\Http\Controllers\App\Panel\FavoriteProductsController;
 use App\Http\Controllers\App\Panel\GalleryController as PanelGalleryController;
 use App\Http\Controllers\App\Panel\HistoryProductsController;
 use App\Http\Controllers\App\Panel\ProductsController as PanelProductsController;
+use App\Http\Controllers\App\PaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+
+Route::prefix('cart')->group(function () {
+    Route::get('/',          [CartController::class, 'index']);
+    Route::post('/add',      [CartController::class, 'add']);
+    Route::post('/add-many', [CartController::class, 'addMany']);
+    Route::patch('/{item}',  [CartController::class, 'update']);
+    Route::delete('/{item}', [CartController::class, 'remove']);
+    Route::delete('/',       [CartController::class, 'clear']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('favorite')->name("favorite.")->group(function () {
+        Route::get('/', [FavoriteProductsController::class, 'index'])->name('index');
+        Route::get('/ids', [FavoriteProductsController::class, 'ids']);
+        Route::post('/{product}', [FavoriteProductsController::class, 'toggle'])->name('toggle');
+    });
+
+    Route::prefix('orders')->group(function () {
+        Route::get('/',          [OrderController::class, 'index']);
+        Route::get('/{id}',      [OrderController::class, 'show']);
+        Route::post('/checkout', [OrderController::class, 'checkout']);
+    });
+
+    Route::prefix('payment')->group(function () {
+        Route::get('/{order}/redirect', [PaymentController::class, 'redirect'])->name('payment.redirect');
+        Route::get('/callback',         [PaymentController::class, 'callback'])->name('payment.callback');
+    });
+});
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -38,6 +70,8 @@ Route::get('all-categories', [HomeCategoryController::class, 'showAll'])->name('
 Route::get('sliders', [HomeSliderController::class, 'index'])->name('sliders');
 Route::get('pages', [HomePageController::class, 'index'])->name('pages');
 Route::get('products', [HomeProductsController::class, 'index'])->name('products');
+
+Route::get('/products/filters', [HomeProductsController::class, 'filters']);
 Route::get('fabrics', [HomeFabricController::class, 'index'])->name('products');
 Route::get('fabrics/{fabric}', [HomeFabricController::class, 'show'])->name('fabric');
 Route::get('products/{product}', [HomeProductsController::class, 'show'])->name('product');
@@ -88,11 +122,7 @@ Route::prefix('panel')->name("panel.")->middleware(['auth:sanctum', 'mobileVerif
         Route::put('update/{gallery}', [PanelGalleryController::class, 'update'])->name('update');
         Route::delete('/{gallery}', [PanelGalleryController::class, 'destroy'])->name('destroy');
     });
-    Route::prefix('favorite')->name("favorite.")->group(function () {
-        Route::get('/', [FavoriteProductsController::class, 'index'])->name('index');
-        Route::post('/{product}', [FavoriteProductsController::class, 'store'])->name('store');
-        Route::delete('/{product}', [FavoriteProductsController::class, 'destroy'])->name('destroy');
-    });
+
 
     Route::prefix('history')->name("history.")->group(function () {
         Route::get('/', [HistoryProductsController::class, 'index'])->name('index');

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Product\Products;
 use App\Models\Product\Fabric;
 use App\Models\Product\CategoryAttribute;
+use App\Models\Product\CustomProductItem;
 
 class Category extends Model
 {
@@ -47,37 +48,38 @@ class Category extends Model
     {
         return $this->hasMany(CategoryAttribute::class);
     }
-      public function discounts (){
+    public function discounts()
+    {
         return $this->hasMany(Discount::class, 'category_id');
     }
- public function allAttributes()
-{
-    $attrs = $this->attributes()->with('categoryValues')->get();
+    public function allAttributes()
+    {
+        $attrs = $this->attributes()->with('categoryValues')->get();
 
-    if ($this->parent_id) {
-        $parent = static::with('attributes.categoryValues')->find($this->parent_id);
-        if ($parent) {
-            $attrs = $attrs->merge($parent->allAttributes());
+        if ($this->parent_id) {
+            $parent = static::with('attributes.categoryValues')->find($this->parent_id);
+            if ($parent) {
+                $attrs = $attrs->merge($parent->allAttributes());
+            }
         }
+
+        return $attrs->unique('id');
     }
+    public function checkoutAttributes()
+    {
+        return $this->allAttributes()
+            ->where('type', 1)
+            ->map(fn($attribute) => [
+                'id'     => $attribute->id,
+                'name'   => $attribute->name,
+                'unit'   => $attribute->unit,
+                'type'   => $attribute->type,
+                'values' => $attribute->categoryValues->map(fn($value) => [
+                    'id'    => $value->id,
+                    'value' => $value->value,
+                    "price" => $value->price,
 
-    return $attrs->unique('id');
-}
-public function checkoutAttributes()
-{
-    return $this->allAttributes()
-        ->where('type', 1)
-        ->map(fn ($attribute) => [
-            'id'     => $attribute->id,
-            'name'   => $attribute->name,
-            'unit'   => $attribute->unit,
-            'type'   => $attribute->type,
-            'values' => $attribute->categoryValues->map(fn ($value) => [
-                'id'    => $value->id,
-                'value' => $value->value,
-                "price" =>$value->price,
-
-            ])->values(),
-        ])->values();
-}
+                ])->values(),
+            ])->values();
+    }
 }

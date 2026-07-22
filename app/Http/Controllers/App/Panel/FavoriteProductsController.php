@@ -18,29 +18,24 @@ class FavoriteProductsController extends Controller
         return new ProductsCollection($favorites);
     }
 
-    public function store(Products $product)
+    public function toggle(Products $product)
     {
 
         $user = auth()->user();
         if ($user->favoriteProducts()->where('products_id', $product->id)->exists()) {
-            return $this->error(null, 'این محصول قبلا نشان شده است', 400);
+            $user->favoriteProducts()->detach($product->id);
+            return $this->success(null, 'محصول با موفقیت از علاقه مندی ها حذف شد');
         }
 
         $user->favoriteProducts()->attach($product->id);
 
         return $this->success(new ProductsResource($product), 'محصول با موفقیت به علاقه مندی ها اضافه شد');
     }
-
-
-    public function destroy(Products $product)
+    public function ids()
     {
+
         $user = auth()->user();
-
-        if (!$user->favoriteProducts()->where('products_id', $product->id)->exists()) {
-            return $this->error(null, 'این محصول در بخش نشان شده ها نیست', 400);
-        }
-
-        $user->favoriteProducts()->detach($product->id);
-        return $this->success(null, 'محصول با موفقیت از علاقه مندی ها حذف شد');
+        $ids = $user->favoriteProducts()->pluck('product_id');
+        return response()->json($ids);
     }
 }
