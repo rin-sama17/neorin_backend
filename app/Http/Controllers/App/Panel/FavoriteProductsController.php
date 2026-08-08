@@ -35,7 +35,7 @@ class FavoriteProductsController extends Controller
     {
 
         $user = auth()->user();
-        $ids = $user->favoriteProducts()->pluck('product_id');
+        $ids = $user->favoriteProducts()->pluck('products.id');
         return response()->json($ids);
     }
 }

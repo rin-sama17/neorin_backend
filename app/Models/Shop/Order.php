@@ -41,4 +41,13 @@ class Order extends Model
             }
         });
     }
+    public function scopeForUser($query, int $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    public function scopeStatus($query, ?string $status)
+    {
+        return $query->when($status && $status !== 'all', fn($q) => $q->where('order_status', $status));
+    }
 }

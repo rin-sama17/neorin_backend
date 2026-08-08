@@ -32,27 +32,29 @@ class ProductsResource extends JsonResource
                 'value'       => $discount->value,
                 'final_price' => $discount->calculateFinalPrice($this->price),
             ] : null,
-
+            'main_size_name'           => $this->main_size_name,
+            'width'          => $this->width,
+            'height'         => $this->height,
             // سایزها با قیمت و تخفیف
-           'sizes' => $this->sizes->map(function ($size) use ($discount) {
-                    $originalPrice = $size->price ?? $this->price;
-                    return [
-                        'id'             => $size->id,
-                        'name'           => $size->name,
-                        'width'          => $size->width,
-                        'height'         => $size->height,
-                        'stock'          => $size->stock,
-                        'image'          => $size->image,
-                        'original_price' => $originalPrice,
-                        'discount'       => $discount ? [
-                            'value'       => $discount->value,
-                            'final_price' => $discount->calculateFinalPrice($originalPrice),
-                        ] : null,
-                    ];
-                }),
-            
+            'sizes' => $this->sizes->map(function ($size) use ($discount) {
+                $originalPrice = $size->price ?? $this->price;
+                return [
+                    'id'             => $size->id,
+                    'name'           => $size->name,
+                    'width'          => $size->width,
+                    'height'         => $size->height,
+                    'stock'          => $size->stock,
+                    'image'          => $size->image,
+                    'original_price' => $originalPrice,
+                    'discount'       => $discount ? [
+                        'value'       => $discount->value,
+                        'final_price' => $discount->calculateFinalPrice($originalPrice),
+                    ] : null,
+                ];
+            }),
+
             // روابط
-            'gallery' =>$this->gallery,
+            'gallery' => $this->gallery,
             'category'         => $this->category,
             'city'             => $this->city,
             'user'             => $this->user,

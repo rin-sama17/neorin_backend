@@ -4,6 +4,8 @@ namespace App\Http\Controllers\App;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shop\CheckoutRequest;
+use App\Http\Requests\Shop\OrderIndexRequest;
+use App\Http\Resources\Shop\OrderResource;
 use App\Http\Services\Order\OrderService;
 use App\Models\Shop\Cart;
 use App\Models\Shop\Order;
@@ -17,14 +19,18 @@ class OrderController extends Controller
 
     public function __construct(private OrderService $orderService) {}
 
-    public function index(): JsonResponse
+    public function index(OrderIndexRequest $request)
     {
-        $orders = Order::with('items')
-            ->where('user_id', auth()->id())
+        $orders = Order::query()
+            ->forUser($request->user()->id)
+            ->status($request->query('status'))
+            ->with('items')
             ->latest()
-            ->get();
+            ->paginate($request->integer('per_page', 10));
 
-        return response()->json($orders);
+
+
+        return OrderResource::collection($orders);
     }
 
     public function show(int $id): JsonResponse

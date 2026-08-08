@@ -50,7 +50,7 @@ class RegisteredUserController extends Controller
         $smsService->sendSmsOtp($request->mobile, $otpCode);
 
         return response()->json([
-            'message' => 'کد تایید با موفقیت ارسال شد ' . $otpCode . '  :کد تایید شما(در محصول نهایی کد تایید از طریق پیامک ارسال خواهد شد )',
+            'message' => 'کد تایید با موفقیت ارسال شد ',
             'token' => $token,
         ], 200);
     }
@@ -118,40 +118,3 @@ class RegisteredUserController extends Controller
         };
     }
 }
-
-
-
-
-
-/**
- * Handle an incoming registration request.
- *
- * @throws \Illuminate\Validation\ValidationException
- */
-
-//     public function store(Request $request): Response
-//     {
-//         $request->validate([
-//             'name' => ['required', 'string', 'max:255'],
-//             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-//             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-//             'mobile' => ['required', 'string','max:15','unique:'.User::class],
-//             'city_id' => ['required', 'exists:cities,id'],
-//         ]);
-
-//         $user = User::create([
-//             'name' => $request->name,
-//             'email' => $request->email,
-//             'password' => Hash::make($request->string('password')),
-//             'mobile' => $request->mobile,
-//             'city_id' => $request->city_id,
-
-//         ]);
-
-//         event(new Registered($user));
-
-//         Auth::login($user);
-
-//         return response()->noContent();
-//     }
-// }

@@ -40,8 +40,13 @@ class StoreProductsRequest extends FormRequest
             'color_ids'        => 'nullable|array',
             'color_ids.*'      => 'exists:colors,id',
 
+
+            'main_size_name'       => 'required|string|max:120|min:2',
+            'width'      => 'required|string|max:20',
+            'height'     => 'required|string|max:20',
+
             // سایزها
-           'sizes'            => 'nullable|array',
+            'sizes'            => 'nullable|array',
             'sizes[*].id'       => 'required|exists:size,id',
             'sizes[*].price'    => 'nullable|numeric|min:0',
             'sizes[*].stock'    => 'nullable|integer|min:0',

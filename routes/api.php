@@ -2,12 +2,17 @@
 
 use App\Http\Controllers\Admin\Content\PageController;
 use App\Http\Controllers\Admin\Content\SliderController;
+use App\Http\Controllers\Admin\Product\CalculationProfileController;
 use App\Http\Controllers\Admin\Product\CategoryAttributeController;
 use App\Http\Controllers\Admin\Product\CategoryController;
 use App\Http\Controllers\Admin\Product\CategoryValueController;
 use App\Http\Controllers\Admin\Product\ColorController;
+use App\Http\Controllers\Admin\Product\CustomProductController;
+use App\Http\Controllers\Admin\Product\CustomProductItemController;
+use App\Http\Controllers\Admin\Product\CustomProductRuleController;
 use App\Http\Controllers\Admin\Product\DiscountController;
 use App\Http\Controllers\Admin\Product\FabricController;
+use App\Http\Controllers\Admin\Product\FormulaController;
 use App\Http\Controllers\App\Home\FabricController as HomeFabricController;
 use App\Http\Controllers\Admin\Product\GalleryController;
 use App\Http\Controllers\Admin\Product\ProductsController;
@@ -18,6 +23,7 @@ use App\Http\Controllers\Admin\User\UserController;
 use App\Http\Controllers\App\CartController;
 use App\Http\Controllers\App\Home\CategoryController as HomeCategoryController;
 use App\Http\Controllers\App\Home\CityController;
+use App\Http\Controllers\App\Home\CustomProductController as HomeCustomProductController;
 use App\Http\Controllers\App\Home\PageController as HomePageController;
 use App\Http\Controllers\App\Home\ProductsController as HomeProductsController;
 use App\Http\Controllers\App\Home\SliderController as HomeSliderController;
@@ -60,7 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+Route::middleware(['auth:sanctum'])->get('/me', function (Request $request) {
     return $request->user();
 });
 
@@ -81,8 +87,27 @@ Route::get('cities', [CityController::class, 'index'])->name('index');
 Route::get('cities/{city}', [CityController::class, 'show'])->name('show');
 
 
+Route::prefix('custom-products')->name('custom-products.')->group(function () {
+    Route::get('/', [HomeCustomProductController::class, 'index'])->name('index');
+    Route::get('/{slug}', [HomeCustomProductController::class, 'show'])->name('show');
+    Route::get('/item/{itemId}', [HomeCustomProductController::class, 'showItem'])->name('item');
+    Route::post('/rules', [HomeCustomProductController::class, 'evaluateRules'])->name('rules');
+    Route::post('/rules/all', [HomeCustomProductController::class, 'evaluateAllRules'])->name('rules.all');
+    Route::post('/calculate', [HomeCustomProductController::class, 'calculate'])->name('calculate');
+});
+
+
 Route::prefix('admin')->name("admin.")->group(function () {
     Route::apiResource('setting', SettingController::class);
+    Route::apiResource('custom-products', CustomProductController::class);
+
+    Route::apiResource('custom-products.custom-product-items', CustomProductItemController::class);
+
+    Route::apiResource('custom-products.custom-product-items.custom-product-rules', CustomProductRuleController::class);
+
+    Route::apiResource('calculation-profiles', CalculationProfileController::class);
+
+    Route::apiResource('calculation-profiles.formulas', FormulaController::class);
 
     Route::prefix('product')->name("product.")->group(function () {
         Route::apiResource('category', CategoryController::class);

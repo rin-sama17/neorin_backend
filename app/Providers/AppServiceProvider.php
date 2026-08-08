@@ -11,6 +11,7 @@ use App\Http\Services\Cart\CartService;
 use App\Http\Services\Order\CartToOrderConverter;
 use App\Http\Services\Order\OrderService;
 use App\Http\Services\Order\PriceCalculatorService;
+use App\Http\Services\CustomProduct\RuleEngine;
 use App\Listeners\SendOrderConfirmation;
 use App\Listeners\ClearUserCart;
 use App\Models\Shop\CartItem;
@@ -20,25 +21,21 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use App\Policies\OrderPolicy;
 use App\Services\Cart\CartMergeService;
+use App\Services\Order\Calculation\StrategyResolver;
 
 class AppServiceProvider extends ServiceProvider
 {
-
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
-        $this->app->singleton(CartService::class);
-        $this->app->singleton(CartMergeService::class);
+        $this->app->singleton(StrategyResolver::class);
         $this->app->singleton(PriceCalculatorService::class);
         $this->app->singleton(CartToOrderConverter::class);
+        $this->app->singleton(CartService::class);
+        $this->app->singleton(CartMergeService::class);
         $this->app->singleton(OrderService::class);
+        $this->app->singleton(RuleEngine::class);
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot()
     {
         Auth::loginUsingId(1);

@@ -39,7 +39,9 @@ class ProductsResource extends JsonResource
                 'value'       => $discount->value,
                 'final_price' => $discount->calculateFinalPrice($this->price),
             ] : null,
-
+            'main_size_name'           => $this->main_size_name,
+            'width'          => $this->width,
+            'height'         => $this->height,
             // سایزها با قیمت و تخفیف
             'sizes' => $this->sizes->map(function ($size) use ($discount) {
                 $originalPrice = $size->price ?? $this->price;

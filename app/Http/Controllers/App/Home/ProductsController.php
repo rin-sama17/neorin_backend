@@ -80,7 +80,7 @@ class ProductsController extends Controller
 
         $products = $query->paginate($r->get('per_page', 12));
 
-        return ProductListResource::collection($products)->response()->getData();
+        return ProductsResource::collection($products)->response()->getData();
     }
 
     public function filters()

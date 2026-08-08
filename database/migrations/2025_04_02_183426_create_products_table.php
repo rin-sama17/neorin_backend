@@ -23,6 +23,8 @@ return new class extends Migration
             $table->foreignId('city_id')->nullable()->constrained("cities");
             $table->tinyInteger("status")->default(1)->comment("1=>enable , 0=>disable ,3=>pending");
             $table->unsignedBigInteger('view')->default(0);
+
+            $table->string('main_size_name');
             $table->string("width");
             $table->string("height");
             $table->tinyInteger('is_special')->default(0);
