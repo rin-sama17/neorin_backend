@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('unit')->nullable();
-            $table->tinyInteger('selection_type')->default(0)->comment("0 => admin , 1 => customer");
+            $table->tinyInteger('selection_type')->default(0)->comment("0 => admin , 1 => user");
 
             /*
     0 => select

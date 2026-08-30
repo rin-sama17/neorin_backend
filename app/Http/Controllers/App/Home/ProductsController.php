@@ -86,7 +86,7 @@ class ProductsController extends Controller
     public function filters()
     {
         return response()->json([
-            'categories' => Category::select('id', 'name')->get(),
+            'categories' => Category::whereNull('parent_id')->with('children')->get(),
 
             'sizes' => Size::select('width', 'height')
                 ->distinct()

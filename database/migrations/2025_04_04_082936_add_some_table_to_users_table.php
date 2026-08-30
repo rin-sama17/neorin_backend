@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('city_id')->after('email')->nullable()->constrained("cities");
             $table->dateTime('mobile_verified_at')->after('email')->nullable();
             $table->tinyInteger('is_active')->after('email')->default(0);
-            $table->tinyInteger('user_type')->after('email')->default(0);
         });
     }
 

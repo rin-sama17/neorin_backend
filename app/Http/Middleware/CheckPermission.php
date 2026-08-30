@@ -2,93 +2,56 @@
 
 namespace App\Http\Middleware;
 
+use App\Traits\HttpResponses;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckPermission
 {
+    use HttpResponses;
+
     /**
      * Handle an incoming request.
      *
+     * Usage:
+     *   ->middleware('permission:products')            -> derives products.view/create/update/delete
+     *   ->middleware('permission:custom-products.manage-rules') -> exact slug (no derivation)
+     *   ->middleware('permission:orders.view-own,orders.view')  -> any-of exact slugs
+     *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string ...$permissions): Response
     {
-        if (!Auth::check()) {
-            return response()->json([
-                'message' => 'لطفا ابتدا وارد شوید'
-            ], 401);
+        $user = $request->user();
+
+        if (!$user) {
+            return $this->error(null, 'لطفا ابتدا وارد شوید', 401);
         }
 
-        $routeName = $request->route()->getName();
+        if ($user->isSuperAdmin()) {
+            return $next($request);
+        }
+        $required = collect($permissions)
+            ->map(fn(string $permission) => str_contains($permission, '.')
+                ? $permission
+                : $permission . '.' . $this->actionToOperation($request->route()->getActionMethod()));
 
-        $permission = $this->routeToPermission($routeName);
-
-        if (!$permission) {
-            return response()->json([
-                'message' => 'Permission mapping not found.'
-            ], 500);
+        if ($user->hasAnyPermission(...$required)) {
+            return $next($request);
         }
 
-        if (!Auth::user()->hasPermission($permission)) {
-            return response()->json([
-                'message' => 'شما دسترسی لازم برای این عملیات را ندارید'
-            ], 403);
-        }
-
-        return $next($request);
+        return $this->error(null, 'شما اجازه انجام این عملیات را ندارید.', 403);
     }
 
-    private function routeToPermission(string $routeName): ?string
+    private function actionToOperation(string $method): string
     {
-        $parts = explode('.', $routeName);
-
-        // admin.product.products.index
-
-        if (count($parts) < 4) {
-            return null;
-        }
-
-        $resource = $this->resourceMap()[$parts[2]] ?? null;
-
-        if (!$resource) {
-            return null;
-        }
-
-        $action = match ($parts[3]) {
+        return match ($method) {
             'index', 'show' => 'view',
-            'store' => 'create',
-            'update' => 'update',
-            'destroy' => 'delete',
-            default => null,
+            'store'          => 'create',
+            'update'         => 'update',
+            'destroy'        => 'delete',
+            default          => $method,
         };
-
-        if (!$action) {
-            return null;
-        }
-
-        return "{$resource}.{$action}";
-    }
-
-    private function resourceMap(): array
-    {
-        return [
-            'products' => 'product',
-            'category' => 'category',
-            'colors' => 'color',
-            'sizes' => 'size',
-            'discounts' => 'discount',
-            'fabrics' => 'fabric',
-            'gallery' => 'gallery',
-            'page' => 'page',
-            'slider' => 'slider',
-            'user' => 'user',
-            'setting' => 'setting',
-            'category-attribute' => 'category-attribute',
-            'category-value' => 'category-value',
-            'state' => 'state',
-        ];
     }
 }

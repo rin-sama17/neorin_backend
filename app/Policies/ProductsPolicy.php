@@ -21,7 +21,7 @@ class ProductsPolicy
      */
     public function view(User $user, Products $product): bool
     {
-        return $user->id === $product->user_id;
+        return $user->isSuperAdmin() || $user->id === $product->user_id;
     }
 
     /**
@@ -29,7 +29,7 @@ class ProductsPolicy
      */
     public function create(User $user, Products $product): bool
     {
-        return $user->id === $product->user_id;
+        return $user->isSuperAdmin() || $user->id === $product->user_id;
     }
 
     /**
@@ -37,7 +37,7 @@ class ProductsPolicy
      */
     public function update(User $user, Products $products): bool
     {
-        return $user->id === $products->user_id;
+        return $user->isSuperAdmin() || $user->id === $products->user_id;
     }
 
     /**
@@ -45,7 +45,7 @@ class ProductsPolicy
      */
     public function delete(User $user, Products $products): bool
     {
-        return $user->id === $products->user_id;
+        return $user->isSuperAdmin() || $user->id === $products->user_id;
     }
 
     /**

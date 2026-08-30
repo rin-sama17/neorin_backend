@@ -15,7 +15,7 @@ class HistoryProductsController extends Controller
 
   public function index()
   {
-    $viewedProducts = auth()->user()->viewedProducts()->with('city', 'category')->get();
+    $viewedProducts = auth()->user()->viewedProducts()->with(['gallery', 'discounts', 'category', 'sizes', 'fabrics'])->get();
     return new ProductsCollection($viewedProducts);
   }
 

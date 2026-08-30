@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
-            $table->foreignId('parent_id')->nullable()->constrained("states")->onDelete("cascade")->onUpdate("cascade");
+            $table->foreignId('city_id')->nullable()->constrained("cities")->onDelete("cascade")->onUpdate("cascade");
             $table->tinyInteger("status")->default(1)->comment("1=>enable , 0=>disable");
             $table->timestamps();
             $table->softDeletes();

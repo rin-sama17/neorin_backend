@@ -10,7 +10,9 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        return new CategoryCollection(Category::all()->whereNull('parent_id'));
+        return new CategoryCollection(
+            Category::whereNull('parent_id')->get()
+        );
     }
     public function showAll()
     {

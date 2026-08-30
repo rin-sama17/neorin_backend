@@ -21,6 +21,12 @@ class UserResource extends JsonResource
             'email_verified_at' => $this->email_verified_at,
             'mobile' => $this->mobile,
             'mobile_verified_at' => $this->mobile_verified_at,
+            'roles' => $this->whenLoaded('roles', fn () => $this->roles->map(fn ($role) => [
+                'id'          => $role->id,
+                'name'        => $role->name,
+                'slug'        => $role->slug,
+                'permissions' => $role->permissions->pluck('slug'),
+            ])),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

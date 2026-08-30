@@ -22,7 +22,7 @@ class GalleryPolicy
      */
     public function view(User $user, Gallery $gallery)
     {
-        return $user->id == $gallery->product->user_id;
+        return $user->isSuperAdmin() || $user->id == $gallery->product->user_id;
     }
 
     /**
@@ -30,7 +30,7 @@ class GalleryPolicy
      */
     public function create(User $user, Products $product): bool
     {
-        return $user->id === $product->user_id;
+        return $user->isSuperAdmin() || $user->id === $product->user_id;
     }
 
     /**
@@ -38,7 +38,7 @@ class GalleryPolicy
      */
     public function update(User $user, Gallery $gallery): bool
     {
-        return $user->id === $gallery->product->user_id;;
+        return $user->isSuperAdmin() || $user->id === $gallery->product->user_id;;
     }
 
     /**
@@ -46,7 +46,7 @@ class GalleryPolicy
      */
     public function delete(User $user, Gallery $gallery): bool
     {
-        return $user->id === $gallery->product->user_id;
+        return $user->isSuperAdmin() || $user->id === $gallery->product->user_id;
     }
 
     /**

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Services\Sms\SmsService;
 use App\Models\User;
 use App\Models\User\Otp;
+use App\Models\User\Role;
+use App\Http\Services\Cart\CartMergeService;
 use App\Traits\HttpResponses;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
@@ -16,8 +18,49 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Str;
 
+use function Pest\Laravel\json;
+
 class RegisteredUserController extends Controller
 {
+
+    public function loginWithPassword(Request $request)
+    {
+        $validate = $request->validate([
+            "mobile" => ["require", 'string', 'min:11', 'max:15'],
+            "password" => ['require', 'string'],
+        ], [
+            'mobile.required' => 'شماره موبایل الزامی است.',
+            'mobile.string' => 'شماره موبایل باید یک رشته باشد.',
+            'mobile.min' => 'شماره موبایل باید حداقل ۱۱ رقم باشد.',
+            'mobile.max' => 'شماره موبایل باید حداکثر ۱۵ رقم باشد.',
+        ]);
+
+        $user = User::where("mobile", $validate['mobile'])->first();
+
+        if (!$user) {
+            return response()->json([
+                'message' => "کاربر یافت نشد"
+            ], 404);
+        }
+        if (!$user->password) {
+            return response()->json([
+                'message' => "ورود با پسورد امکان پذیر نمی‌باشد"
+            ], 401);
+        }
+        if (!Hash::check($validate['password'], $user->password)) {
+            return response()->json([
+                'message' => "پسورد وارد شده صحیح نمی‌باشد"
+            ], 422);
+        }
+        Auth::login($user);
+        app(CartMergeService::class)->merge(
+            $request->session()->getId(),
+            auth()->user()
+        );
+        return response()->json([
+            'message' => 'با موفقیت وارد شدید',
+        ], 200);
+    }
 
     public function sendOtp(Request $request, SmsService $smsService)
     {
@@ -47,7 +90,7 @@ class RegisteredUserController extends Controller
             ]
         );
 
-        $smsService->sendSmsOtp($request->mobile, $otpCode);
+        // $smsService->sendSmsOtp($request->mobile, $otpCode);
 
         return response()->json([
             'message' => 'کد تایید با موفقیت ارسال شد ',
@@ -58,15 +101,16 @@ class RegisteredUserController extends Controller
 
     public function verifyOtpAndRegister(Request $request)
     {
-
         $request->validate([
             'mobile' => ['required', 'string', 'max:15'],
             'otp' => ['required', 'string', 'size:4'],
             'token' => ['required', 'string'],
         ]);
 
-        $otp = Otp::where('login_id', $request->mobile)->where('token', $request->token)->where('used', 0)->first();
-
+        $otp = Otp::where('login_id', $request->mobile)
+            ->where('token', $request->token)
+            ->where('used', 0)
+            ->first();
 
         if (!$otp) {
             return response()->json([
@@ -96,25 +140,46 @@ class RegisteredUserController extends Controller
         $otp->update(['used' => 1]);
 
         $user = User::where('mobile', $request->mobile)->first();
+
         if ($user) {
-            Auth::login($user);
+            if (!$user->mobile_verified_at) {
+                $user->update(['mobile_verified_at' => now()]);
+            }
+
+            $this->loginAndMergeCart($request, $user);
+
             return response()->json([
                 'message' => 'با موفقیت وارد شدید',
             ], 200);
-        } else {
-            $user = User::create([
-                'password' => Hash::make(Str(10)),
-                'mobile' => $request->mobile,
-                'city_id' => $request->city_id,
-                "mobile_verified_at" => now()
-            ]);
+        }
 
-            event(new Registered($user));
+        $user = User::create([
+            'mobile' => $request->mobile,
+            'mobile_verified_at' => now(),
+        ]);
 
-            Auth::login($user);
-            return response()->json([
-                'message' => 'با موفقیت ثبت نام و وارد شدید',
-            ], 200);
-        };
+        $userRole = Role::where('slug', 'user')->first();
+        if ($userRole) {
+            $user->roles()->attach($userRole);
+        }
+
+        event(new Registered($user));
+
+        $this->loginAndMergeCart($request, $user);
+
+        return response()->json([
+            'message' => 'با موفقیت ثبت نام و وارد شدید',
+        ], 200);
+    }
+
+    private function loginAndMergeCart(Request $request, User $user): void
+    {
+        $guestSessionId = $request->session()->getId();
+
+        Auth::login($user);
+
+        app(CartMergeService::class)->merge($guestSessionId, $user);
+
+        $request->session()->regenerate();
     }
 }

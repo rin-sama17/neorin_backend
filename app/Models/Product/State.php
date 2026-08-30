@@ -2,27 +2,19 @@
 
 namespace App\Models\Product;
 
-use Dyrynda\Database\Support\CascadeSoftDeletes;
+use App\Models\Geo\City;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class State extends Model
 {
-    use SoftDeletes, CascadeSoftDeletes;
+    use SoftDeletes;
 
-    protected $cascadeDeletes = ['children'];
+    protected $guarded = ['id'];
 
-
-    protected $guarded = ["id"];
-
-    public function children()
+    public function cities()
     {
-        return $this->hasMany($this, 'parent_id');
-    }
-
-    public function parent()
-    {
-        return $this->hasOne($this, 'parent_id');
+        return $this->belongsTo(City::class);
     }
 
     public function products()

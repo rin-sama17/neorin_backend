@@ -42,7 +42,6 @@ class CartController extends Controller
     }
     public function update(UpdateCartItemRequest $request, CartItem $item)
     {
-        $this->authorize('update', $item);
         $this->cartService->updateQuantity($item, $request->validated('quantity'));
         $cart = $this->cartService->getOrCreate($request);
         return response()->json($this->cartService->summary($cart));
@@ -50,7 +49,6 @@ class CartController extends Controller
 
     public function remove(Request $request, CartItem $item)
     {
-        $this->authorize('delete', $item);
         $this->cartService->remove($item);
         $cart = $this->cartService->getOrCreate($request);
         return response()->json($this->cartService->summary($cart));

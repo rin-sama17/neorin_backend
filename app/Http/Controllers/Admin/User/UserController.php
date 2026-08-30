@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return new UserCollection(User::all());
+        return new UserCollection(User::with('roles.permissions')->get());
     }
 
 
@@ -26,17 +26,33 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return new UserResource($user);
+        return new UserResource($user->load('roles.permissions'));
     }
 
+    public function store(Request $request)
+    {
+        //
+    }
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, User $user)
     {
-        $input =['name'=>$request->name];
-        $user->update($input);
-        return  new UserResource($user);
+        $request->validate([
+            'name' => 'sometimes|nullable|string|max:255',
+            'roles' => 'sometimes|array',
+            'roles.*' => 'integer|exists:roles,id',
+        ]);
+
+        if ($request->has('name')) {
+            $user->update(['name' => $request->name]);
+        }
+
+        if ($request->has('roles')) {
+            $user->roles()->sync($request->input('roles', []));
+        }
+
+        return new UserResource($user->load('roles.permissions'));
     }
 
     /**
@@ -44,8 +60,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
-        return $this->success(null,"کاربر با موفقیت حذف شد");
+        if ($user->isSuperAdmin()) {
+            return $this->error(null, 'امکان حذف سوپر ادمین وجود ندارد.', 422);
+        }
 
+        $user->delete();
+        return $this->success(null, "کاربر با موفقیت حذف شد");
     }
 }

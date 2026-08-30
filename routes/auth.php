@@ -8,6 +8,11 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+
+// Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+//     ->middleware('guest')
+//     ->name('login');
+
 Route::post('/otp', [RegisteredUserController::class, 'sendOtp'])
     ->middleware('guest')
     ->name('otp');
@@ -17,7 +22,7 @@ Route::post('/register', [RegisteredUserController::class, 'verifyOtpAndRegister
     ->middleware('guest')
     ->name('register');
 
-Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+Route::post('/login', [RegisteredUserController::class, 'loginWithPassword'])
     ->middleware('guest')
     ->name('login');
 

@@ -9,11 +9,11 @@ class CartItemPolicy
 {
     public function update(User $user, CartItem $item): bool
     {
-        return $item->cart->user_id === $user->id;
+        return $user->isSuperAdmin() || $item->cart->user_id === $user->id;
     }
 
     public function delete(User $user, CartItem $item): bool
     {
-        return $item->cart->user_id === $user->id;
+        return $user->isSuperAdmin() || $item->cart->user_id === $user->id;
     }
 }

@@ -2,7 +2,7 @@
 
 // app/Services/Cart/CartMergeService.php
 
-namespace App\Services\Cart;
+namespace App\Http\Services\Cart;
 
 use App\Http\Services\Cart\CartService;
 use App\Models\Shop\Cart;
