@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->restrictOnDelete();
 
+            $table->foreignId('payment_id')->constrained()->restrictOnDelete();
             $table->json('shipping_address_snapshot');
 
             $table->unsignedBigInteger('subtotal');
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->unsignedBigInteger('total_price');
 
             $table->enum('order_status', [
+                'unpaid',
                 'pending',
                 'confirmed',
                 'processing',
@@ -30,23 +32,12 @@ return new class extends Migration
                 'delivered',
                 'cancelled',
                 'refunded'
-            ])->default('pending');
-
-            $table->enum('payment_status', [
-                'unpaid',
-                'pending',
-                'paid',
-                'failed',
-                'refunded'
             ])->default('unpaid');
 
-            $table->enum('payment_method', ['online', 'cod', 'wallet'])->nullable();
 
             $table->string('tracking_code')->nullable();
-            $table->string('payment_ref')->nullable();
             $table->text('notes')->nullable();
 
-            $table->timestamp('paid_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

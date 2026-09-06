@@ -11,6 +11,15 @@ class PriceCalculatorService
     public function __construct(
         private StrategyResolver $strategyResolver,
     ) {}
+    function productPrice($cartItem)
+    {
+        if ($cartItem->size) {
+            $finalPrice = $cartItem->size->discount->final_price ?? $cartItem->size->price ?? 0;
+            return $finalPrice;
+        }
+        $finalPrice = $cartItem->discount->final_price ?? $cartItem->product?->price ?? 0;
+        return  $finalPrice;
+    }
 
     public function calculateItem(CartItem $item): int
     {
@@ -30,13 +39,13 @@ class PriceCalculatorService
             'categoryValues.categoryValue',
         ]);
 
-        $basePrice   = $item->size?->price ?? $item->product?->price ?? 0;
-        $fabricPrice = $item->fabrics->sum('price');
+
+        $basePrice   = $this->productPrice($item);
         $attrPrice   = $item->categoryValues
             ->filter(fn($a) => $a->category_value_id !== null)
             ->sum(fn($a) => $a->categoryValue?->price ?? 0);
 
-        return $basePrice + $fabricPrice + $attrPrice;
+        return $basePrice   + $attrPrice;
     }
 
     public function calculateCustomItem(CartItem $item): int

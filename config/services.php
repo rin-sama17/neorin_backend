@@ -34,5 +34,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'zarinpal' => [
+        'merchant_id' => env('ZARINPAL_MERCHANT_ID'),
+        'base_url' => env("ZARINPAL_BASE_URL", "https://sandbox.zarinpal.com"),
+
+    ]
 
 ];

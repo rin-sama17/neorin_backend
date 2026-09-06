@@ -13,17 +13,16 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->restrictOnDelete();
-
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('amount');
-            $table->enum('status', ['pending', 'success', 'failed']);
-            $table->string('gateway');
-            $table->string('ref_id')->nullable();
-            $table->string('authority')->nullable();
+            $table->text('description')->nullable();
+            $table->enum('status', ['pending', 'paid', 'failed'])->default('pending');
+            $table->text('authority')->nullable();
+            $table->text('ref_id')->nullable();
+            $table->text('card_pan')->nullable();
+            $table->text('trace_no')->nullable();
             $table->json('gateway_response')->nullable();
-
-            $table->timestamp('paid_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

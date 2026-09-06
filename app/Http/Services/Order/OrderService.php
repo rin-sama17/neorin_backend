@@ -19,10 +19,9 @@ class OrderService
         User    $user,
         Cart    $cart,
         array   $addressData,
-        string  $paymentMethod,
         ?string $notes = null,
     ): Order {
-        return DB::transaction(function () use ($user, $cart, $addressData, $paymentMethod, $notes) {
+        return DB::transaction(function () use ($user, $cart, $addressData,  $notes) {
 
             $cart->loadMissing([
                 'items.product',
@@ -38,7 +37,6 @@ class OrderService
             );
 
             $shipping = $this->calculator->calculateShipping($subtotal);
-            $discount = $this->getDiscount($user);
 
             // 2. ساخت order
             $order = Order::create([
@@ -46,12 +44,8 @@ class OrderService
                 'shipping_address_snapshot' => $addressData,
                 'subtotal'                  => $subtotal,
                 'shipping_price'            => $shipping,
-                'discount'                  => $discount,
-                'total_price'               => $subtotal + $shipping - $discount,
-                'payment_method'            => $paymentMethod,
-                'notes'                     => $notes,
-                'order_status'              => 'pending',
-                'payment_status'            => 'unpaid',
+                'total_price'               => $subtotal,
+                'notes'                     => $notes
             ]);
 
             // 3. ساخت order items
@@ -67,10 +61,5 @@ class OrderService
 
             return $order->load('items');
         });
-    }
-
-    private function getDiscount(User $user): int
-    {
-        return 0;
     }
 }

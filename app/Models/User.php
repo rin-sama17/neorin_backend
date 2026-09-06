@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Models\User\Role;
 use App\Models\Product\Products;
+use App\Models\Shop\Payment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -182,5 +183,9 @@ class User extends Authenticatable
     public function addresses()
     {
         return $this->hasMany(Address::class);
+    }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

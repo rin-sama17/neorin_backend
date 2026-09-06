@@ -7,8 +7,10 @@ use App\Http\Requests\Shop\CheckoutRequest;
 use App\Http\Requests\Shop\OrderIndexRequest;
 use App\Http\Resources\Shop\OrderResource;
 use App\Http\Services\Order\OrderService;
+use App\Http\Services\Payment\ZarinpalService;
 use App\Models\Shop\Cart;
 use App\Models\Shop\Order;
+use App\Models\User\Address;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 
@@ -17,7 +19,7 @@ class OrderController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct(private OrderService $orderService) {}
+    public function __construct(private OrderService $orderService, private ZarinpalService $zarinpalService) {}
 
     public function index(OrderIndexRequest $request)
     {
@@ -40,7 +42,7 @@ class OrderController extends Controller
         return response()->json($order);
     }
 
-    public function checkout(CheckoutRequest $request): JsonResponse
+    public function checkout(CheckoutRequest $request)
     {
         $cart = Cart::where('user_id', auth()->id())
             ->with(['items'])
@@ -49,19 +51,46 @@ class OrderController extends Controller
         if ($cart->items->isEmpty()) {
             return response()->json(['message' => 'سبد خرید خالی است'], 422);
         }
+        $address = $this->resolveAddress($request);
 
+        $addressData = [
+            'title'       => $address->title,
+            'state'       => $address->state->name,
+            'city'        => $address->city->name,
+            'address'     => $address->address,
+            'plaque'      => $address->plaque,
+            'unit'        => $address->unit,
+            'postal_code' => $address->postal_code,
+        ];
         $order = $this->orderService->checkout(
             user: auth()->user(),
             cart: $cart,
-            addressData: $request->validated('address'),
-            paymentMethod: $request->validated('payment_method'),
+            addressData: $addressData,
             notes: $request->validated('notes'),
         );
-
+        $payment =  $this->zarinpalService->createPayment(
+            $order->total_price,
+            $order->notes ?? 'ساخت سفارش جدید',
+            $order->user->id,
+            $order->id,
+            route('payment.verify')
+        );
         return response()->json([
-            'order_id'    => $order->id,
-            'total'       => $order->total_price,
-            'payment_url' => route('payment.redirect', $order->id),
-        ], 201);
+            'payment_url' => $payment['payment_url'],
+            'authority' => $payment['authority']
+        ]);
+    }
+    private function resolveAddress(CheckoutRequest $request): Address
+    {
+        if ($request->filled('address_id')) {
+            return $request->user()
+                ->addresses()
+                ->with(['state', 'city'])
+                ->findOrFail($request->address_id);
+        }
+
+        $address = $request->user()->addresses()->create($request->validated('new_address'));
+
+        return $address->load(['state', 'city']);
     }
 }

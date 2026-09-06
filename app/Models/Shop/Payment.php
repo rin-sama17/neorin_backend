@@ -10,7 +10,6 @@ class Payment extends Model
     protected $guarded = ['id'];
     protected $casts   = [
         'gateway_response' => 'array',
-        'paid_at'          => 'datetime',
     ];
 
     public function order()

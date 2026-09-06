@@ -65,8 +65,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('payment')->group(function () {
-        Route::get('/{order}/redirect', [PaymentController::class, 'redirect'])->name('payment.redirect');
-        Route::get('/callback',         [PaymentController::class, 'callback'])->name('payment.callback');
+        Route::get('/create', [PaymentController::class, 'createPayment'])->name('payment.create');
+        Route::get('/verify',         [PaymentController::class, 'verifyPayment'])->name('payment.verify');
+        Route::get('/{id}',         [PaymentController::class, 'getPayment'])->name('payment.get');
     });
 });
 
