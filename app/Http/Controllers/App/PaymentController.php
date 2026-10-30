@@ -74,7 +74,7 @@ class PaymentController extends Controller
                 'message' => 'خطا در تایید تراکنش',
             ], 400);
         }
-        $order = Order::where('payment_id', $payment->id);
+        $order = Order::where('id', $payment->order_id);
         if (!$order) {
             return response()->json([
                 'success' => false,
@@ -82,7 +82,7 @@ class PaymentController extends Controller
             ], 400);
         }
         $order->update([
-            'order_status' => 'pending'
+            'order_status' => 'paid'
         ]);
         // آپدیت وضعیت پرداخت
         $payment->update([
@@ -101,7 +101,7 @@ class PaymentController extends Controller
     public function getPayment($id)
     {
 
-        $payment = Payment::find($id)->where('user_id', 3)->first();
+        $payment = Payment::find($id)->where('user_id', 2)->first();
 
         if (!$payment) {
             return response()->json([

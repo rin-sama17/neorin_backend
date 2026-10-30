@@ -16,6 +16,21 @@ class CartService
         private StrategyResolver $strategyResolver,
     ) {}
 
+    public function productPrice(CartItem $cartItem): float
+    {
+        if ($cartItem->size) {
+            $discount = $cartItem->product?->getActiveDiscount();
+            return $discount ? $discount->calculateFinalPrice($cartItem->size->price) : $cartItem->size->price;
+        }
+
+        $discount = $cartItem->product?->getActiveDiscount();
+        if ($discount) {
+            return $discount->calculateFinalPrice($cartItem->product?->price ?? 0);
+        }
+
+        return $cartItem->product?->price ?? 0;
+    }
+
     public function getOrCreate(Request $request): Cart
     {
         if (auth()->check()) {
@@ -152,15 +167,24 @@ class CartService
         ])->get();
 
         $calculated = $items->map(function ($item) {
+            $discount = $item->product->getActiveDiscount();
+
             $itemData = [
                 'id'        => $item->id,
                 'slug'      => $item->slug,
                 'item_type' => $item->item_type,
-                'product'   => $item->product ? [
+                'product' => $item->product ? [
                     'id'    => $item->product->id,
                     'title' => $item->product->title,
                     'image' => $item->product->image,
                     'price' => $item->product->price,
+                    'discount' => $discount ? [
+                        'id'          => $discount->id,
+                        'product_id'  => $discount->product_id,
+                        'category_id' => $discount->category_id,
+                        'value'       => $discount->value,
+                        'final_price' => $discount->calculateFinalPrice($item->product->price),
+                    ] : null,
                 ] : null,
                 'custom_product'  => null,
                 'custom_item'     => null,
@@ -171,6 +195,10 @@ class CartService
                     'width'  => $item->size->width,
                     'height' => $item->size->height,
                     'price'  => $item->size->price,
+                    'discount' => $discount ? [
+                        'value'       => $discount->value,
+                        'final_price' => $discount->calculateFinalPrice($item->size->price),
+                    ] : null,
                 ] : null,
                 'fabrics' => $item->fabrics->map(fn($f) => [
                     'id'    => $f->id,
@@ -222,13 +250,12 @@ class CartService
                     }
                 }
             } else {
-                $basePrice = $item->size?->price ?? $item->product?->price ?? 0;
-                $fabricPrice = $item->fabrics->sum('price');
-                $attrPrice = $item->categoryValues
+                $basePrice   = $this->productPrice($item);
+                $attrPrice   = $item->categoryValues
                     ->filter(fn($a) => $a->category_value_id !== null)
                     ->sum(fn($a) => $a->categoryValue?->price ?? 0);
 
-                $unitPrice = $basePrice + $fabricPrice + $attrPrice;
+                $unitPrice = $basePrice +   $attrPrice;
                 $itemData['unit_price']  = $unitPrice;
                 $itemData['total_price'] = $unitPrice * $item->quantity;
             }

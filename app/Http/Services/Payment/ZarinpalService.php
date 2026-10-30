@@ -33,7 +33,7 @@ class ZarinpalService
         if (isset($result['data']['code']) && $result['data']["code"] == 100) {
             $payment = Payment::create([
                 'user_id' => $userId,
-                // 'order_id' => $orderId,
+                'order_id' => $orderId,
                 "amount" => $amount,
                 'description' => $description,
                 "authority" => $result['data']['authority'],

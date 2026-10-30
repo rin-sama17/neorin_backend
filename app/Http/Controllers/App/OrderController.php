@@ -32,7 +32,7 @@ class OrderController extends Controller
 
 
 
-        return OrderResource::collection($orders);
+        return OrderResource::collection($orders)->response()->getData();
     }
 
     public function show(int $id): JsonResponse

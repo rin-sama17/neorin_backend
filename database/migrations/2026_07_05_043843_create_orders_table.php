@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->restrictOnDelete();
 
-            $table->foreignId('payment_id')->constrained()->restrictOnDelete();
             $table->json('shipping_address_snapshot');
 
             $table->unsignedBigInteger('subtotal');
@@ -24,15 +23,14 @@ return new class extends Migration
             $table->unsignedBigInteger('total_price');
 
             $table->enum('order_status', [
-                'unpaid',
                 'pending',
-                'confirmed',
+                'paid',
                 'processing',
+                'packed',
                 'shipped',
                 'delivered',
                 'cancelled',
-                'refunded'
-            ])->default('unpaid');
+            ])->default('pending');
 
 
             $table->string('tracking_code')->nullable();
